@@ -128,8 +128,17 @@ wHTTP_EXPORT
 	wRESPONSE +("HTTP/1.0 " y(i_1 ARRAY) " " t(HTTP_STATUS i_1) "\r\n")
 
 	# overwrite the content length header just in case
-	t(i_2 "Content-Length" y(zRESPONSE ARRAY))
 
+	# need to detect if returning a string or not. Allows for anything
+	0f(!= yRESPONSE ARRAY)
+	{
+		t(i_2 "Content-Length" y(zRESPONSE ARRAY))
+	}
+	f1
+	{
+		t(i_2 "Content-Length" zRESPONSE)
+	}
+	
 	# add headers. Formatted as [["header" "value"] ...]
 	l(< I zi_2)
 	{
