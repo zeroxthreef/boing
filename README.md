@@ -19,14 +19,14 @@ If you don't want to build certain modules, there are options for each to be tur
 ### Linux & Unixes:
 ```
 git clone https://github.com/zeroxthreef/boing.git
-cd Boing
+cd boing
 mkdir build && cd build && cmake .. && make
 ```
 
 ### Windows:
 ```
 git clone https://github.com/zeroxthreef/boing.git
-cd Boing
+cd boing
 mkdir build
 cd build
 cmake ..
@@ -152,7 +152,7 @@ l<I20{p"Hello, World!"wI+(I1)}
 ```
 
 ### Custom functions and eval
-To do anything with passed arguments, {...}, the 'e' (eval) operation needs to be used. Note that the eval operation takes 2 implicit arguments, but more than that passed explicitly allow for more functionality like resetting the scope stack so that it doesn't interfere with earlier variables.
+To do anything with passed arguments, {...}, the `e` (eval) operation needs to be used. Note that the eval operation takes 2 implicit arguments, but more than that passed explicitly allow for more functionality like resetting the scope stack so that it doesn't interfere with earlier variables.
 
 Example:
 ```
@@ -194,7 +194,7 @@ eTEST_FUNC_ARGS0 # it is fine to not put the argument in an array if only passin
 ```
 
 ### Value passing, mutation, and the cascade of previous values
-ALL values passed as arguments, stored in tables, etc are passed by reference. It is possibly to pass by "value" if the 'c' (recursive copy) operation is used.
+ALL values passed as arguments, stored in tables, etc are passed by reference. It is possible to pass by "value" if the `c` (recursive copy) operation is used.
 
 Anytime the interpreter is evaluating a block, it takes note of the previous value. This is not normally something to think about except for when returning from functions, chaining ifs, and in any other case where you want to know the previous value without taking it as an argument. This is why the start of if operations need a 0 in front, as the previous value is used to cascade through if chains so that when one runs it can stop the following from executing.
 
