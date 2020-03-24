@@ -215,11 +215,7 @@ boing_value_t *host_repl(boing_t *boing)
 			{
 				boing_str_release(boing, input);
 				boing_str_release(boing, temp);
-				if(ret && boing_value_reference_dec(boing, ret))
-				{
-					boing_error(boing, 0, "could not refdec return value in REPL");
-					return NULL;
-				}
+				
 				return ret;
 			}
 
