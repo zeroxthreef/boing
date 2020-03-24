@@ -4,12 +4,12 @@ This module lets you call a bunch of system specific functions.
 ## Dependencies
 Linux and Unixes
 ---
-\* libdl
+* libdl
 
 Windows
 ---
-\* (TODO FINISH THESE)
-\* winsock2
+* (TODO FINISH THESE)
+* winsock2
 
 ## Documentation
 Note: this entire project is not at version 1.0.0 yet. Things will change with this module.
@@ -63,5 +63,5 @@ In most cases, a numeric 0 means success.
 | `OS_LIST_DIR` | external value (C function pointer) | returns an array of array(string)s or a number (0) if not a directory or failure, format: (void) |
 
 ## TODO
-\* finish adding more numeric identifiers for socket options and various other socket controls
-\* maybe add unix domain sockets and the equivalent for windows
+* finish adding more numeric identifiers for socket options and various other socket controls
+* maybe add unix domain sockets and the equivalent for windows

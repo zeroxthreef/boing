@@ -11,23 +11,21 @@ Note: Nothing will cause a true leak (except for pool corrupting errors) because
 Note#2: Boing has not reached version 1.0 yet. Lots will change before then. Havent finished setting up all of the readmes and documentation yet.
 
 
-\*It is mostly C89, but the few C99 features it does use (like stdint.h and vsnprintf) are easily changed with a few #defines like BOING_VSNPRINTF and defining uint8_t, uint32_t as something else.
+\* _It is mostly C89, but the few C99 features it does use (like stdint.h and vsnprintf) are easily changed with a few #defines like BOING_VSNPRINTF and defining uint8_t, uint32_t as something else._
 
 ## Building
 If you don't want to build certain modules, there are options for each to be turned on and off. All modules are built by default and the os module is statically linked by default.
 
-Linux & Unixes:
----
+### Linux & Unixes:
 ```
-git clone TODO PUT URL
+git clone https://github.com/zeroxthreef/boing.git
 cd Boing
 mkdir build && cd build && cmake .. && make
 ```
 
-Windows:
----
+### Windows:
 ```
-git clone TODO PUT URL
+git clone https://github.com/zeroxthreef/boing.git
 cd Boing
 mkdir build
 cd build
@@ -36,27 +34,24 @@ TODO FINISH WINDOWS BUILD INSTRS
 ```
 
 ## Installation
-Linux & Unixes: (prefix with sudo or run as root)
----
+### Linux & Unixes: (prefix with sudo or run as root)
 ```
 make install
 ```
 
-Windows:
----
+### Windows:
 ```
 TODO FINISH WINDOWS INSTALL INSTRS
 ```
 
 ## Full Documentation
-The full documentation of operations, types, and various other globals and information is detailed at ``TODO INSERT LINK TO DOC MARKDOWN``
+The full documentation of operations, types, and various other globals and information is [detailed here](https://github.com/zeroxthreef/boing/tree/master/documentation)
 
 ## Syntax and Usage
 There are 8 important details about boing that make reading and writing scripts easier:
 
 
-Operations, the single character prefixes, can have implicit or explicit arguments.
----
+### Operations, the single character prefixes, can have implicit or explicit arguments.
 Example:
 ```
 # the print operation expects 1 implicit argument, but by using parentheses we can make it take more
@@ -66,8 +61,7 @@ p"hello"               # prints hello
 p("hello " "world")    # prints hello world
 ```
 
-Literals
----
+### Literals
 Example:
 ```
 # strings (technically number arrays)
@@ -86,8 +80,7 @@ Example:
 ["test" ["nested" "array" "allowed"] 123]
 ```
 
-Explicit args AND implicit args vs implicit only operations
----
+### Explicit args AND implicit args vs implicit only operations
 Example:
 ```
 # operations like l and f (loop and if) take only implicit arguments. In the instance of f, providing any paretheses will just add to readability but whatever comes after will still be evaluated
@@ -105,8 +98,7 @@ f(= 5 5)
 }
 ```
 
-Identifiers and variables
----
+### Identifiers and variables
 Example
 ```
 # identifiers can only be a single, uninterrupted, string of A-Z _ characters.
@@ -133,8 +125,7 @@ w(TEST_VARIABLE 0) #the write/set operation, 'w'
 wTEST_VARIABLE0
 ```
 
-Evaluated blocks vs passed blocks
----
+### Evaluated blocks vs passed blocks
 Example:
 ```
 # the 2 types of operation blocks are () and {}. ()'s are sometimes seen as operation argument explicit openers. This may be a problem if the intention is, for example, to do: "+( (+( 3 3 )) 5 )" but "+ ( +( 3 3 ) ) 5" is written, the 5 will be dropped as the ()'s were parsed as the explicit argument open.
@@ -144,8 +135,7 @@ p("this should print the sum: " (+(5 6 7 8 9)) )
 p("this should print nothing: " {+(5 6 7 8 9)} )
 ```
 
-Evaluated vs. passed arguments
----
+### Evaluated vs. passed arguments
 Example:
 ```
 # using the l operation example from before, it might seem inconsistent that argument 1, the test which is executed for every loop, is run without being enclosed in {}. Operations can choose to have their arguments evaluated or passed, allowing manual control of argument evaluation. This is the case for l.
@@ -161,8 +151,7 @@ l(< I 20)
 l<I20{p"Hello, World!"wI+(I1)}
 ```
 
-Custom functions and eval
----
+### Custom functions and eval
 To do anything with passed arguments, {...}, the 'e' (eval) operation needs to be used. Note that the eval operation takes 2 implicit arguments, but more than that passed explicitly allow for more functionality like resetting the scope stack so that it doesn't interfere with earlier variables.
 
 Example:
@@ -204,8 +193,7 @@ eTEST_FUNC_ARGS["hello argument"]
 eTEST_FUNC_ARGS0 # it is fine to not put the argument in an array if only passing 1 argument, most importantly, not an array type. Its usually a good idea to always wrap your argument list in an array in case it ever becomes a string or array
 ```
 
-Value passing, mutation, and the cascade of previous values
----
+### Value passing, mutation, and the cascade of previous values
 ALL values passed as arguments, stored in tables, etc are passed by reference. It is possibly to pass by "value" if the 'c' (recursive copy) operation is used.
 
 Anytime the interpreter is evaluating a block, it takes note of the previous value. This is not normally something to think about except for when returning from functions, chaining ifs, and in any other case where you want to know the previous value without taking it as an argument. This is why the start of if operations need a 0 in front, as the previous value is used to cascade through if chains so that when one runs it can stop the following from executing.
@@ -271,7 +259,7 @@ TODO: put bare minimun initialization and eval code
 ```
 
 ## Dependencies
-The core of the interpreter (boing.h) needs nothing but the C89 (with a few exceptions that can be changed by the user) standard library.
+The core of the interpreter (boing.h) needs nothing but the C89 (with a few exceptions that can be changed by a few defines) standard library.
 
 The OS module, depending on your operating system, may depend on certain system libraries.
 
@@ -283,8 +271,8 @@ This project is licensed under the Unlicense (a more verbose public domain).
 Note that if you build and link with any module that links with another library, the libraries linked with that module have their own individual licenses that will apply.
 
 ## TODO
-\* reduce the recursion in boing_value_reference_dec() because it entirely halts when opening a 100kb+ file and then destroying its array
-\* change the boing_error() function to a loglevel version
-\* maybe add error catching and throwing. Will require a lot more work on making sure things are cleaned up when error conditions are met
-\* more operations to utilize the rest of non-upper case + !'_' ascii
-\* various code cleaning and hopefully improvements in documentation
+* reduce the recursion in boing_value_reference_dec() because it entirely halts when opening a 100kb+ file and then destroying its array
+* change the boing_error() function to a loglevel version
+* maybe add error catching and throwing. Will require a lot more work on making sure things are cleaned up when error conditions are met
+* more operations to utilize the rest of non-upper case + !'_' ascii
+* various code cleaning and hopefully improvements in documentation

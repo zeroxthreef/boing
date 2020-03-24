@@ -4,7 +4,7 @@ A quick reference is located at the top of the boing.h file.
 Modules each have their own documentation readmes.
 
 
-<!-- TOC -->autoauto- [Boing Documentation](#boing-documentation)auto	- [Boing Operations](#boing-operations)auto	- [Types](#types)auto		- [Literals](#literals)auto		- [Identifiers](#identifiers)auto	- [Syntax](#syntax)auto		- [Operation Syntax](#operation-syntax)auto		- [Array Syntax](#array-syntax)auto		- [Block Syntax](#block-syntax)auto		- [Pass Block Syntax](#pass-block-syntax)auto		- [Notes](#notes)auto	- [Value Evolution](#value-evolution)auto		- [Tables](#tables)auto		- [Scope Stack](#scope-stack)auto		- [Program](#program)auto	- [Interpreter Behavior](#interpreter-behavior)auto	- [Scope](#scope)auto	- [Operations](#operations)auto		- [print](#print)auto		- [stringify](#stringify)auto		- [console read](#console-read)auto		- [plus](#plus)auto		- [minus](#minus)auto		- [multiply](#multiply)auto		- [divide](#divide)auto		- [modulo](#modulo)auto		- [power](#power)auto		- [copy](#copy)auto		- [index](#index)auto		- [table](#table)auto		- [sizeof](#sizeof)auto		- [type](#type)auto		- [equal](#equal)auto		- [less than](#less-than)auto		- [greater than](#greater-than)auto		- [if](#if)auto		- [loop](#loop)auto		- [set (write)](#set-write)auto		- [eval](#eval)auto		- [file](#file)auto		- [logical and](#logical-and)auto		- [logical or](#logical-or)auto		- [logical not](#logical-not)auto		- [increment](#increment)auto		- [decrement](#decrement)auto		- [external call](#external-call)auto		- [hash](#hash)auto		- [scope stack control](#scope-stack-control)auto		- [search](#search)auto		- [random](#random)auto		- [sort](#sort)auto		- [array setup](#array-setup)auto	- [Operation Quick Reference](#operation-quick-reference)auto	- [Default Interpreter Identifiers](#default-interpreter-identifiers)autoauto<!-- /TOC -->
+<!-- TOC -->autoauto- [Boing Documentation](#boing-documentation)auto	- [Boing Operations](#boing-operations)auto	- [Types](#types)auto		- [Literals](#literals)auto		- [Identifiers](#identifiers)auto	- [Syntax](#syntax)auto		- [Operation Syntax](#operation-syntax)auto		- [Array Syntax](#array-syntax)auto		- [Block Syntax](#block-syntax)auto		- [Pass Block Syntax](#pass-block-syntax)auto		- [Notes](#notes)auto	- [Value Evolution](#value-evolution)auto		- [Tables](#tables)auto		- [Scope Stack](#scope-stack)auto		- [Program](#program)auto	- [Interpreter Behavior](#interpreter-behavior)auto		- [Operations, the single character prefixes, can have implicit or explicit arguments.](#operations-the-single-character-prefixes-can-have-implicit-or-explicit-arguments)auto		- [Literals](#literals-1)auto		- [Explicit args AND implicit args vs implicit only operations](#explicit-args-and-implicit-args-vs-implicit-only-operations)auto		- [Identifiers and variables](#identifiers-and-variables)auto		- [Evaluated blocks vs passed blocks](#evaluated-blocks-vs-passed-blocks)auto		- [Evaluated vs. passed arguments](#evaluated-vs-passed-arguments)auto		- [Custom functions and eval](#custom-functions-and-eval)auto		- [Value passing, mutation, and the cascade of previous values](#value-passing-mutation-and-the-cascade-of-previous-values)auto	- [Scope](#scope)auto		- [Not working example](#not-working-example)auto		- [Working example:](#working-example)auto	- [Operations](#operations)auto		- [print](#print)auto			- [Behavior with different parameters](#behavior-with-different-parameters)auto		- [stringify](#stringify)auto			- [Behavior with different parameters](#behavior-with-different-parameters-1)auto		- [console read](#console-read)auto			- [Behavior with different parameters](#behavior-with-different-parameters-2)auto		- [plus](#plus)auto			- [Behavior with different parameters](#behavior-with-different-parameters-3)auto		- [minus](#minus)auto			- [Behavior with different parameters](#behavior-with-different-parameters-4)auto		- [multiply](#multiply)auto			- [Behavior with different parameters](#behavior-with-different-parameters-5)auto		- [divide](#divide)auto			- [Behavior with different parameters](#behavior-with-different-parameters-6)auto		- [modulo](#modulo)auto			- [Behavior with different parameters](#behavior-with-different-parameters-7)auto		- [power](#power)auto			- [Behavior with different parameters](#behavior-with-different-parameters-8)auto		- [copy](#copy)auto			- [Behavior with different parameters](#behavior-with-different-parameters-9)auto		- [index](#index)auto			- [Behavior with different parameters](#behavior-with-different-parameters-10)auto		- [table](#table)auto			- [Behavior with different parameters](#behavior-with-different-parameters-11)auto		- [sizeof](#sizeof)auto			- [Behavior with different parameters](#behavior-with-different-parameters-12)auto		- [type](#type)auto			- [Behavior with different parameters](#behavior-with-different-parameters-13)auto		- [equal](#equal)auto			- [Behavior with different parameters](#behavior-with-different-parameters-14)auto		- [less than](#less-than)auto			- [Behavior with different parameters](#behavior-with-different-parameters-15)auto		- [greater than](#greater-than)auto			- [Behavior with different parameters](#behavior-with-different-parameters-16)auto		- [if](#if)auto			- [Behavior with different parameters](#behavior-with-different-parameters-17)auto		- [loop](#loop)auto			- [Behavior with different parameters](#behavior-with-different-parameters-18)auto		- [set (write)](#set-write)auto			- [Behavior with different parameters](#behavior-with-different-parameters-19)auto		- [eval](#eval)auto			- [Behavior with different parameters](#behavior-with-different-parameters-20)auto		- [file](#file)auto			- [Behavior with different parameters](#behavior-with-different-parameters-21)auto		- [logical and](#logical-and)auto			- [Behavior with different parameters](#behavior-with-different-parameters-22)auto		- [logical or](#logical-or)auto			- [Behavior with different parameters](#behavior-with-different-parameters-23)auto		- [logical not](#logical-not)auto			- [Behavior with different parameters](#behavior-with-different-parameters-24)auto		- [increment](#increment)auto			- [Behavior with different parameters](#behavior-with-different-parameters-25)auto		- [decrement](#decrement)auto			- [Behavior with different parameters](#behavior-with-different-parameters-26)auto		- [external call](#external-call)auto			- [Behavior with different parameters](#behavior-with-different-parameters-27)auto		- [hash](#hash)auto			- [Behavior with different parameters](#behavior-with-different-parameters-28)auto		- [scope stack control](#scope-stack-control)auto			- [Behavior with different parameters](#behavior-with-different-parameters-29)auto		- [search](#search)auto			- [Behavior with different parameters](#behavior-with-different-parameters-30)auto		- [random](#random)auto			- [Behavior with different parameters](#behavior-with-different-parameters-31)auto		- [sort](#sort)auto			- [Behavior with different parameters](#behavior-with-different-parameters-32)auto		- [array setup](#array-setup)auto			- [Behavior with different parameters](#behavior-with-different-parameters-33)auto	- [Operation Quick Reference](#operation-quick-reference)auto	- [Default Interpreter Identifiers](#default-interpreter-identifiers)autoauto<!-- /TOC -->
 
 
 ## Boing Operations
@@ -219,8 +219,7 @@ This is only used internally in the interpreter, but it is described in the boin
 There are 8 important details about boing that make reading and writing scripts easier:
 
 
-Operations, the single character prefixes, can have implicit or explicit arguments.
----
+### Operations, the single character prefixes, can have implicit or explicit arguments.
 Example:
 ```
 # the print operation expects 1 implicit argument, but by using parentheses we can make it take more
@@ -230,8 +229,7 @@ p"hello"               # prints hello
 p("hello " "world")    # prints hello world
 ```
 
-Literals
----
+### Literals
 Example:
 ```
 # strings (technically number arrays)
@@ -250,8 +248,7 @@ Example:
 ["test" ["nested" "array" "allowed"] 123]
 ```
 
-Explicit args AND implicit args vs implicit only operations
----
+### Explicit args AND implicit args vs implicit only operations
 Example:
 ```
 # operations like l and f (loop and if) take only implicit arguments. In the instance of f, providing any paretheses will just add to readability but whatever comes after will still be evaluated
@@ -269,8 +266,7 @@ f(= 5 5)
 }
 ```
 
-Identifiers and variables
----
+### Identifiers and variables
 Example
 ```
 # identifiers can only be a single, uninterrupted, string of A-Z _ characters.
@@ -297,8 +293,7 @@ w(TEST_VARIABLE 0) #the write/set operation, 'w'
 wTEST_VARIABLE0
 ```
 
-Evaluated blocks vs passed blocks
----
+### Evaluated blocks vs passed blocks
 Example:
 ```
 # the 2 types of operation blocks are () and {}. ()'s are sometimes seen as operation argument explicit openers. This may be a problem if the intention is, for example, to do: "+( (+( 3 3 )) 5 )" but "+ ( +( 3 3 ) ) 5" is written, the 5 will be dropped as the ()'s were parsed as the explicit argument open.
@@ -308,8 +303,7 @@ p("this should print the sum: " (+(5 6 7 8 9)) )
 p("this should print nothing: " {+(5 6 7 8 9)} )
 ```
 
-Evaluated vs. passed arguments
----
+### Evaluated vs. passed arguments
 Example:
 ```
 # using the l operation example from before, it might seem inconsistent that argument 1, the test which is executed for every loop, is run without being enclosed in {}. Operations can choose to have their arguments evaluated or passed, allowing manual control of argument evaluation. This is the case for l.
@@ -325,8 +319,7 @@ l(< I 20)
 l<I20{p"Hello, World!"wI+(I1)}
 ```
 
-Custom functions and eval
----
+### Custom functions and eval
 To do anything with passed arguments, {...}, the 'e' (eval) operation needs to be used. Note that the eval operation takes 2 implicit arguments, but more than that passed explicitly allow for more functionality like resetting the scope stack so that it doesn't interfere with earlier variables.
 
 Example:
@@ -368,8 +361,7 @@ eTEST_FUNC_ARGS["hello argument"]
 eTEST_FUNC_ARGS0 # it is fine to not put the argument in an array if only passing 1 argument, most importantly, not an array type. Its usually a good idea to always wrap your argument list in an array in case it ever becomes a string or array
 ```
 
-Value passing, mutation, and the cascade of previous values
----
+### Value passing, mutation, and the cascade of previous values
 ALL values passed as arguments, stored in tables, etc are passed by reference. It is possibly to pass by "value" if the 'c' (recursive copy) operation is used.
 
 Anytime the interpreter is evaluating a block, it takes note of the previous value. This is not normally something to think about except for when returning from functions, chaining ifs, and in any other case where you want to know the previous value without taking it as an argument. This is why the start of if operations need a 0 in front, as the previous value is used to cascade through if chains so that when one runs it can stop the following from executing.
@@ -416,8 +408,7 @@ Boing is dynamically scoped. If recursion doesn't seem to be working, this is be
 The solution is to pass the root scope (or any scope higher than the one you're sure is interfering) over and over so it gets a new identifier each time.
 
 
-Not working example
----
+### Not working example
 ```
 wRECURSE
 {
@@ -437,8 +428,7 @@ eRECURSE[0]
 It just prints 4 over and over
 
 
-Working example:
----
+### Working example:
 ```
 wRECURSE
 {
@@ -464,8 +454,7 @@ Now, it prints 4 3 2 1 0
 | --- | --- | --- |
 | `p` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior And Description |
 | --- | --- |
 | (...) | Focus toward strings. If passed a number, it will turn it into a string (not typecasted. It is passed as a char). If an array of numbers passed, it won't follow stringify and convert to printable syntax. It prints a newline at the end. |
@@ -476,8 +465,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `s` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (anything) | By default, it will output a string thats more readable than the minified option. |
@@ -489,8 +477,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `r` | [X] | 0 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (void) | Returns a single character from the console input |
@@ -503,8 +490,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `+` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | Force the number positive |
@@ -519,8 +505,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `-` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | Force the number negative |
@@ -534,8 +519,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `*` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | Square the number |
@@ -549,8 +533,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `/` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | Square root of number |
@@ -564,8 +547,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `%` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number, number) | Returns modulo of arg0 by arg1 |
@@ -576,8 +558,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `^` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number, number) | Returns arg0 to the power of arg1 |
@@ -588,8 +569,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `c` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any) | Recursively copy all values that may somehow be stored inside |
@@ -600,8 +580,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `i` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (array, number) | Returns the element at the position of arg1 |
@@ -615,8 +594,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `t` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (array, any) | First, the array **must**, if not empty, have rows of exatly 2 elements wide. The row with an element at position 0 will act as the key, and if arg1 matches, the value will be returned. If not found, numeric 0 will be returned |
@@ -628,8 +606,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `z` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any) | Returns the length attribute of the value. Really only useful for arrays |
@@ -640,8 +617,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `y` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any) | Returns a number equal to the global identifier of the same name (NUMBER, ARRAY, OPERATION, EXTERNAL) |
@@ -665,8 +641,7 @@ If an external value is passed in arg0, it will fail regardless |
 | --- | --- | --- |
 | `=` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | Recursively test if both arguments are exactly equal. Returns a numeric 1 if equal and a numeric 0 if not |
@@ -678,8 +653,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `<` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | Recursively test if arg0 is less than arg1. Returns numeric 1 if true and a numeric 0 if not |
@@ -690,8 +664,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `>` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | Recursively test if arg0 is greater than arg1. Returns numeric 1 if true and a numeric 0 if not |
@@ -702,8 +675,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `f` | [ ] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | If arg0 is _anything but_ a numeric 0, it will evaluate arg1 and return numeric 1. If not, it will return a numeric 0 and not eval arg1 |
@@ -714,8 +686,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `l` | [ ] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | If arg0 is _anything but_ a numeric 0, it will evaluate arg1 and continue testing arg0 forever until a numeric 0 is tested. If never run, it will return a numeric 0. If it ran any number of times, the number of times run will be returned |
@@ -726,8 +697,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `w` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | Set arg0 to arg1. Note that this does not mean arg0 becomes arg1. It does not reside in the same memmory location and any changes made to either values will not be reflected in the opposite. However, because arrays, operations, and external values contain pointers to other things, those will be shared between both values and changes to anything inside will affect the other's elements. If this is not desired, use the copy operation |
@@ -738,8 +708,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `e` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | Returns arg0 evaluated and passed with the arguments ('_' and ARGS) that arg0 is insterted into. It wont be insterted into a new argument array if arg1 is an array itself, which in that case, will become the argument array itself |
@@ -752,8 +721,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `o` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (array) | Return an array with the bytes of a file read from the path string provided. If the file does not exist, a numeric 0 will be returned |
@@ -767,8 +735,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `&` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | Returns numeric 1 if both arguments are _anything but_ numeric 0. Returns numeric 0 if not |
@@ -780,8 +747,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `|` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any, any) | Returns numeric 1 if any arguments are _anything but_ numeric 0. Returns numeric 0 if not |
@@ -793,8 +759,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `!` | [ ] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any) | Returns numeric 1 if arg0 is _anything but_ numeric 0. Returns numeric 0 otherwise |
@@ -805,8 +770,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `n` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | arg0 will be incremented by exactly 1.0 and set to that value. Returns the result as well |
@@ -818,8 +782,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `d` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | arg0 will be decremented by exactly 1.0 and set to that value. Returns the result as well |
@@ -831,8 +794,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `x` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (external, any) | If arg1 is anything but an array, internally the value will be put into a new args array. If arg1 is an array, it becomes the args array |
@@ -845,8 +807,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `h` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any) | Returns the numeric value of the value recursively hashed |
@@ -857,8 +818,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `k` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | Returns an external value of the scope stack selected. If a numeric value of 0 is passed, it returns the root scope stack of the stack visible to this operation when evaluated. If -1, a whole new scope stack will be initialized and passed. Useful for sandboxing. If arg1 >0, the scope level visible to the operation n levels up will be returned |
@@ -869,8 +829,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `a` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (array, any) | Returns the position of the array arg1 matches. Note that this has a focus toward strings so encasing a number in an array or passing a number in arg1 have the behave the same. If the desire is to search exactly for a numbr in an array, surround arg1 in another array |
@@ -881,8 +840,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `g` | [X] | 0 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (void) | Returns a numeric random number |
@@ -895,8 +853,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `q` | [X] | 1 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (array) | Returns an array of the elements in arg0 but in ascending sorted order |
@@ -908,8 +865,7 @@ Behavior with different parameters
 | --- | --- | --- |
 | `u` | [X] | 2 |
 
-Behavior with different parameters
----
+#### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (number) | Returns an array initialized to 0 of arg0 elements |
@@ -943,7 +899,7 @@ Behavior with different parameters
 | `m` | [X] | 1 | import/parse string |
 | `o` | [X] | 1 | file read/file write |
 | `&` | [X] | 2 | logical and |
-| `|` | [X] | 2 | logical or |
+| `\|` | [X] | 2 | logical or |
 | `!` | [ ] | 1 | logical not |
 | `n` | [X] | 1 | increment by 1/increment by any |
 | `d` | [X] | 1 | decrement by 1/decrement by any |

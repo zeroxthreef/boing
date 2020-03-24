@@ -2,9 +2,9 @@
 This module lets you call a bunch of SDL and SDL2_ttf functions.
 
 ## Dependencies
-\* SDL2 (and various other dependencies that SDL needs)
-\* SDL2_ttf
-\* freetype
+* SDL2 (and various other dependencies that SDL needs)
+* SDL2_ttf
+* freetype
 
 Uses the wonderful [stb_image](https://github.com/nothings/stb)
 
@@ -97,5 +97,5 @@ In most cases, a numeric 0 means success.
 | `SCREEN_RECT` | external value (C function pointer) | returns an array(table) or fails on error, format: (number x, number y, number w, number h) |
 
 ## TODO
-\* better identifier names
-\* get more font attributes
+* better identifier names
+* get more font attributes

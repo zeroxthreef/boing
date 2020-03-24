@@ -2,7 +2,7 @@
 This module lets you call lots of things.
 
 ## Dependencies
-\* libffi
+* libffi
 
 ## Documentation
 Note: this entire project is not at version 1.0.0 yet. Things will change with this module.
@@ -18,4 +18,4 @@ Function Identifiers
 | --- | --- | --- |
 
 ## TODO
-\* everything
+* everything
