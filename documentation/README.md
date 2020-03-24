@@ -4,8 +4,108 @@ A quick reference is located at the top of the boing.h file.
 Modules each have their own documentation readmes.
 
 
-<!-- TOC -->autoauto- [Boing Documentation](#boing-documentation)auto	- [Boing Operations](#boing-operations)auto	- [Types](#types)auto		- [Literals](#literals)auto		- [Identifiers](#identifiers)auto	- [Syntax](#syntax)auto		- [Operation Syntax](#operation-syntax)auto		- [Array Syntax](#array-syntax)auto		- [Block Syntax](#block-syntax)auto		- [Pass Block Syntax](#pass-block-syntax)auto		- [Notes](#notes)auto	- [Value Evolution](#value-evolution)auto		- [Tables](#tables)auto		- [Scope Stack](#scope-stack)auto		- [Program](#program)auto	- [Interpreter Behavior](#interpreter-behavior)auto		- [Operations, the single character prefixes, can have implicit or explicit arguments.](#operations-the-single-character-prefixes-can-have-implicit-or-explicit-arguments)auto		- [Literals](#literals-1)auto		- [Explicit args AND implicit args vs implicit only operations](#explicit-args-and-implicit-args-vs-implicit-only-operations)auto		- [Identifiers and variables](#identifiers-and-variables)auto		- [Evaluated blocks vs passed blocks](#evaluated-blocks-vs-passed-blocks)auto		- [Evaluated vs. passed arguments](#evaluated-vs-passed-arguments)auto		- [Custom functions and eval](#custom-functions-and-eval)auto		- [Value passing, mutation, and the cascade of previous values](#value-passing-mutation-and-the-cascade-of-previous-values)auto	- [Scope](#scope)auto		- [Not working example](#not-working-example)auto		- [Working example:](#working-example)auto	- [Operations](#operations)auto		- [print](#print)auto			- [Behavior with different parameters](#behavior-with-different-parameters)auto		- [stringify](#stringify)auto			- [Behavior with different parameters](#behavior-with-different-parameters-1)auto		- [console read](#console-read)auto			- [Behavior with different parameters](#behavior-with-different-parameters-2)auto		- [plus](#plus)auto			- [Behavior with different parameters](#behavior-with-different-parameters-3)auto		- [minus](#minus)auto			- [Behavior with different parameters](#behavior-with-different-parameters-4)auto		- [multiply](#multiply)auto			- [Behavior with different parameters](#behavior-with-different-parameters-5)auto		- [divide](#divide)auto			- [Behavior with different parameters](#behavior-with-different-parameters-6)auto		- [modulo](#modulo)auto			- [Behavior with different parameters](#behavior-with-different-parameters-7)auto		- [power](#power)auto			- [Behavior with different parameters](#behavior-with-different-parameters-8)auto		- [copy](#copy)auto			- [Behavior with different parameters](#behavior-with-different-parameters-9)auto		- [index](#index)auto			- [Behavior with different parameters](#behavior-with-different-parameters-10)auto		- [table](#table)auto			- [Behavior with different parameters](#behavior-with-different-parameters-11)auto		- [sizeof](#sizeof)auto			- [Behavior with different parameters](#behavior-with-different-parameters-12)auto		- [type](#type)auto			- [Behavior with different parameters](#behavior-with-different-parameters-13)auto		- [equal](#equal)auto			- [Behavior with different parameters](#behavior-with-different-parameters-14)auto		- [less than](#less-than)auto			- [Behavior with different parameters](#behavior-with-different-parameters-15)auto		- [greater than](#greater-than)auto			- [Behavior with different parameters](#behavior-with-different-parameters-16)auto		- [if](#if)auto			- [Behavior with different parameters](#behavior-with-different-parameters-17)auto		- [loop](#loop)auto			- [Behavior with different parameters](#behavior-with-different-parameters-18)auto		- [set (write)](#set-write)auto			- [Behavior with different parameters](#behavior-with-different-parameters-19)auto		- [eval](#eval)auto			- [Behavior with different parameters](#behavior-with-different-parameters-20)auto		- [file](#file)auto			- [Behavior with different parameters](#behavior-with-different-parameters-21)auto		- [logical and](#logical-and)auto			- [Behavior with different parameters](#behavior-with-different-parameters-22)auto		- [logical or](#logical-or)auto			- [Behavior with different parameters](#behavior-with-different-parameters-23)auto		- [logical not](#logical-not)auto			- [Behavior with different parameters](#behavior-with-different-parameters-24)auto		- [increment](#increment)auto			- [Behavior with different parameters](#behavior-with-different-parameters-25)auto		- [decrement](#decrement)auto			- [Behavior with different parameters](#behavior-with-different-parameters-26)auto		- [external call](#external-call)auto			- [Behavior with different parameters](#behavior-with-different-parameters-27)auto		- [hash](#hash)auto			- [Behavior with different parameters](#behavior-with-different-parameters-28)auto		- [scope stack control](#scope-stack-control)auto			- [Behavior with different parameters](#behavior-with-different-parameters-29)auto		- [search](#search)auto			- [Behavior with different parameters](#behavior-with-different-parameters-30)auto		- [random](#random)auto			- [Behavior with different parameters](#behavior-with-different-parameters-31)auto		- [sort](#sort)auto			- [Behavior with different parameters](#behavior-with-different-parameters-32)auto		- [array setup](#array-setup)auto			- [Behavior with different parameters](#behavior-with-different-parameters-33)auto	- [Operation Quick Reference](#operation-quick-reference)auto	- [Default Interpreter Identifiers](#default-interpreter-identifiers)autoauto<!-- /TOC -->
+<!-- TOC -->
 
+- [Boing Documentation](#boing-documentation)
+	- [Boing Operations](#boing-operations)
+	- [Types](#types)
+		- [Literals](#literals)
+		- [Identifiers](#identifiers)
+	- [Syntax](#syntax)
+		- [Operation Syntax](#operation-syntax)
+		- [Array Syntax](#array-syntax)
+		- [Block Syntax](#block-syntax)
+		- [Pass Block Syntax](#pass-block-syntax)
+		- [Notes](#notes)
+	- [Value Evolution](#value-evolution)
+		- [Tables](#tables)
+		- [Scope Stack](#scope-stack)
+		- [Program](#program)
+	- [Interpreter Behavior](#interpreter-behavior)
+		- [Operations, the single character prefixes, can have implicit or explicit arguments.](#operations-the-single-character-prefixes-can-have-implicit-or-explicit-arguments)
+		- [Literals](#literals-1)
+		- [Explicit args AND implicit args vs implicit only operations](#explicit-args-and-implicit-args-vs-implicit-only-operations)
+		- [Identifiers and variables](#identifiers-and-variables)
+		- [Evaluated blocks vs passed blocks](#evaluated-blocks-vs-passed-blocks)
+		- [Evaluated vs. passed arguments](#evaluated-vs-passed-arguments)
+		- [Custom functions and eval](#custom-functions-and-eval)
+		- [Value passing, mutation, and the cascade of previous values](#value-passing-mutation-and-the-cascade-of-previous-values)
+	- [Scope](#scope)
+		- [Not working example](#not-working-example)
+		- [Working example:](#working-example)
+	- [Operations](#operations)
+		- [print](#print)
+			- [Behavior with different parameters](#behavior-with-different-parameters)
+		- [stringify](#stringify)
+			- [Behavior with different parameters](#behavior-with-different-parameters-1)
+		- [console read](#console-read)
+			- [Behavior with different parameters](#behavior-with-different-parameters-2)
+		- [plus](#plus)
+			- [Behavior with different parameters](#behavior-with-different-parameters-3)
+		- [minus](#minus)
+			- [Behavior with different parameters](#behavior-with-different-parameters-4)
+		- [multiply](#multiply)
+			- [Behavior with different parameters](#behavior-with-different-parameters-5)
+		- [divide](#divide)
+			- [Behavior with different parameters](#behavior-with-different-parameters-6)
+		- [modulo](#modulo)
+			- [Behavior with different parameters](#behavior-with-different-parameters-7)
+		- [power](#power)
+			- [Behavior with different parameters](#behavior-with-different-parameters-8)
+		- [copy](#copy)
+			- [Behavior with different parameters](#behavior-with-different-parameters-9)
+		- [index](#index)
+			- [Behavior with different parameters](#behavior-with-different-parameters-10)
+		- [table](#table)
+			- [Behavior with different parameters](#behavior-with-different-parameters-11)
+		- [sizeof](#sizeof)
+			- [Behavior with different parameters](#behavior-with-different-parameters-12)
+		- [type](#type)
+			- [Behavior with different parameters](#behavior-with-different-parameters-13)
+		- [equal](#equal)
+			- [Behavior with different parameters](#behavior-with-different-parameters-14)
+		- [less than](#less-than)
+			- [Behavior with different parameters](#behavior-with-different-parameters-15)
+		- [greater than](#greater-than)
+			- [Behavior with different parameters](#behavior-with-different-parameters-16)
+		- [if](#if)
+			- [Behavior with different parameters](#behavior-with-different-parameters-17)
+		- [loop](#loop)
+			- [Behavior with different parameters](#behavior-with-different-parameters-18)
+		- [set (write)](#set-write)
+			- [Behavior with different parameters](#behavior-with-different-parameters-19)
+		- [eval](#eval)
+			- [Behavior with different parameters](#behavior-with-different-parameters-20)
+		- [file](#file)
+			- [Behavior with different parameters](#behavior-with-different-parameters-21)
+		- [logical and](#logical-and)
+			- [Behavior with different parameters](#behavior-with-different-parameters-22)
+		- [logical or](#logical-or)
+			- [Behavior with different parameters](#behavior-with-different-parameters-23)
+		- [logical not](#logical-not)
+			- [Behavior with different parameters](#behavior-with-different-parameters-24)
+		- [increment](#increment)
+			- [Behavior with different parameters](#behavior-with-different-parameters-25)
+		- [decrement](#decrement)
+			- [Behavior with different parameters](#behavior-with-different-parameters-26)
+		- [external call](#external-call)
+			- [Behavior with different parameters](#behavior-with-different-parameters-27)
+		- [hash](#hash)
+			- [Behavior with different parameters](#behavior-with-different-parameters-28)
+		- [scope stack control](#scope-stack-control)
+			- [Behavior with different parameters](#behavior-with-different-parameters-29)
+		- [search](#search)
+			- [Behavior with different parameters](#behavior-with-different-parameters-30)
+		- [random](#random)
+			- [Behavior with different parameters](#behavior-with-different-parameters-31)
+		- [sort](#sort)
+			- [Behavior with different parameters](#behavior-with-different-parameters-32)
+		- [array setup](#array-setup)
+			- [Behavior with different parameters](#behavior-with-different-parameters-33)
+	- [Operation Quick Reference](#operation-quick-reference)
+	- [Default Interpreter Identifiers](#default-interpreter-identifiers)
+
+<!-- /TOC -->
 
 ## Boing Operations
 A boing operation is a single character (ASCII) that has a certain number of implicit arguments. These implicit argument restrictions can easily be overridden with parentheses `(`, `)` directly after operations that allow explicit arguments. Note that some operations **do not allow** explicit arguments so parentheses will just eval the expression but pass as arg0 instead of all arguments. An example is the ``f``, or 'if' operation.
@@ -452,7 +552,7 @@ Now, it prints 4 3 2 1 0
 ### print
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `p` | [X] | 1 |
+| `p` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior And Description |
@@ -463,7 +563,7 @@ Now, it prints 4 3 2 1 0
 ### stringify
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `s` | [X] | 1 |
+| `s` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -475,7 +575,7 @@ Now, it prints 4 3 2 1 0
 ### console read
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `r` | [X] | 0 |
+| `r` | - [x] | 0 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -488,7 +588,7 @@ Now, it prints 4 3 2 1 0
 ### plus
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `+` | [X] | 1 |
+| `+` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -503,7 +603,7 @@ Now, it prints 4 3 2 1 0
 ### minus
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `-` | [X] | 1 |
+| `-` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -517,7 +617,7 @@ Now, it prints 4 3 2 1 0
 ### multiply
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `*` | [X] | 1 |
+| `*` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -531,7 +631,7 @@ Now, it prints 4 3 2 1 0
 ### divide
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `/` | [X] | 1 |
+| `/` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -545,7 +645,7 @@ Now, it prints 4 3 2 1 0
 ### modulo
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `%` | [X] | 2 |
+| `%` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -556,7 +656,7 @@ Now, it prints 4 3 2 1 0
 ### power
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `^` | [X] | 2 |
+| `^` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -567,7 +667,7 @@ Now, it prints 4 3 2 1 0
 ### copy
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `c` | [X] | 1 |
+| `c` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -578,7 +678,7 @@ Now, it prints 4 3 2 1 0
 ### index
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `i` | [X] | 2 |
+| `i` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -592,7 +692,7 @@ Now, it prints 4 3 2 1 0
 ### table
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `t` | [X] | 2 |
+| `t` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -604,7 +704,7 @@ Now, it prints 4 3 2 1 0
 ### sizeof
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `z` | [X] | 1 |
+| `z` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -615,7 +715,7 @@ Now, it prints 4 3 2 1 0
 ### type
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `y` | [X] | 1 |
+| `y` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -639,7 +739,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### equal
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `=` | [X] | 2 |
+| `=` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -651,7 +751,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### less than
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `<` | [X] | 2 |
+| `<` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -662,7 +762,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### greater than
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `>` | [X] | 2 |
+| `>` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -673,7 +773,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### if
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `f` | [ ] | 2 |
+| `f` | - [ ] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -684,7 +784,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### loop
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `l` | [ ] | 2 |
+| `l` | - [ ] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -695,7 +795,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### set (write)
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `w` | [X] | 2 |
+| `w` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -706,7 +806,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### eval
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `e` | [X] | 2 |
+| `e` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -719,7 +819,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### file
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `o` | [X] | 1 |
+| `o` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -733,7 +833,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### logical and
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `&` | [X] | 2 |
+| `&` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -745,7 +845,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### logical or
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `|` | [X] | 2 |
+| `|` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -757,7 +857,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### logical not
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `!` | [ ] | 1 |
+| `!` | - [ ] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -768,7 +868,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### increment
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `n` | [X] | 1 |
+| `n` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -780,7 +880,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### decrement
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `d` | [X] | 1 |
+| `d` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -792,7 +892,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### external call
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `x` | [X] | 2 |
+| `x` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -805,7 +905,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### hash
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `h` | [X] | 1 |
+| `h` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -816,7 +916,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### scope stack control
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `k` | [X] | 1 |
+| `k` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -827,7 +927,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### search
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `a` | [X] | 2 |
+| `a` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -838,7 +938,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### random
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `g` | [X] | 0 |
+| `g` | - [x] | 0 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -851,7 +951,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### sort
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `q` | [X] | 1 |
+| `q` | - [x] | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -863,7 +963,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### array setup
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `u` | [X] | 2 |
+| `u` | - [x] | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -875,41 +975,41 @@ If an external value is passed in arg0, it will fail regardless |
 ## Operation Quick Reference
 | Character | Explicit Arguments Allowed | Implicit Argument Count | Notes |
 | --- | --- | --- | --- |
-| `p` | [X] | 1 | print |
-| `s` | [X] | 1 | stringify |
-| `r` | [X] | 0 | console read |
-| `+` | [X] | 1 | addition/concat/positive |
-| `-` | [X] | 1 | subtraction/remove/negative |
-| `*` | [X] | 1 | multiplication/combination/square |
-| `/` | [X] | 1 | division/split/sqrt |
-| `%` | [X] | 2 | modulo |
-| `^` | [X] | 2 | power |
-| `c` | [X] | 1 | copy |
-| `i` | [X] | 2 | index |
-| `t` | [X] | 2 | table get/set |
-| `z` | [X] | 1 | sizeof |
-| `y` | [X] | 1 | type/typecast |
-| `=` | [X] | 2 | equality test |
-| `<` | [X] | 2 | less than |
-| `>` | [X] | 2 | greater than |
-| `f` | [ ] | 2 | if |
-| `l` | [ ] | 2 | loop |
-| `w` | [X] | 2 | write(set) |
-| `e` | [X] | 2 | eval |
-| `m` | [X] | 1 | import/parse string |
-| `o` | [X] | 1 | file read/file write |
-| `&` | [X] | 2 | logical and |
-| `\|` | [X] | 2 | logical or |
-| `!` | [ ] | 1 | logical not |
-| `n` | [X] | 1 | increment by 1/increment by any |
-| `d` | [X] | 1 | decrement by 1/decrement by any |
-| `x` | [X] | 2 | external call |
-| `h` | [X] | 1 | recursive hash |
-| `k` | [X] | 1 | scope stack control |
-| `a` | [X] | 2 | find |
-| `g` | [X] | 0 | generate(rand)/random to max/random within range |
-| `q` | [X] | 1 | quicksort array/quicksort all arguments |
-| `u` | [X] | 2 | array setup X number of elements to 0/array setup to X number of elements to X |
+| `p` | - [x] | 1 | print |
+| `s` | - [x] | 1 | stringify |
+| `r` | - [x] | 0 | console read |
+| `+` | - [x] | 1 | addition/concat/positive |
+| `-` | - [x] | 1 | subtraction/remove/negative |
+| `*` | - [x] | 1 | multiplication/combination/square |
+| `/` | - [x] | 1 | division/split/sqrt |
+| `%` | - [x] | 2 | modulo |
+| `^` | - [x] | 2 | power |
+| `c` | - [x] | 1 | copy |
+| `i` | - [x] | 2 | index |
+| `t` | - [x] | 2 | table get/set |
+| `z` | - [x] | 1 | sizeof |
+| `y` | - [x] | 1 | type/typecast |
+| `=` | - [x] | 2 | equality test |
+| `<` | - [x] | 2 | less than |
+| `>` | - [x] | 2 | greater than |
+| `f` | - [ ] | 2 | if |
+| `l` | - [ ] | 2 | loop |
+| `w` | - [x] | 2 | write(set) |
+| `e` | - [x] | 2 | eval |
+| `m` | - [x] | 1 | import/parse string |
+| `o` | - [x] | 1 | file read/file write |
+| `&` | - [x] | 2 | logical and |
+| `\|` | - [x] | 2 | logical or |
+| `!` | - [ ] | 1 | logical not |
+| `n` | - [x] | 1 | increment by 1/increment by any |
+| `d` | - [x] | 1 | decrement by 1/decrement by any |
+| `x` | - [x] | 2 | external call |
+| `h` | - [x] | 1 | recursive hash |
+| `k` | - [x] | 1 | scope stack control |
+| `a` | - [x] | 2 | find |
+| `g` | - [x] | 0 | generate(rand)/random to max/random within range |
+| `q` | - [x] | 1 | quicksort array/quicksort all arguments |
+| `u` | - [x] | 2 | array setup X number of elements to 0/array setup to X number of elements to X |
 
 
 ## Default Interpreter Identifiers
