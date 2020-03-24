@@ -552,7 +552,7 @@ Now, it prints 4 3 2 1 0
 ### print
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `p` | - [x] | 1 |
+| `p` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior And Description |
@@ -563,7 +563,7 @@ Now, it prints 4 3 2 1 0
 ### stringify
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `s` | - [x] | 1 |
+| `s` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -575,7 +575,7 @@ Now, it prints 4 3 2 1 0
 ### console read
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `r` | - [x] | 0 |
+| `r` | yes | 0 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -588,7 +588,7 @@ Now, it prints 4 3 2 1 0
 ### plus
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `+` | - [x] | 1 |
+| `+` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -603,7 +603,7 @@ Now, it prints 4 3 2 1 0
 ### minus
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `-` | - [x] | 1 |
+| `-` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -617,7 +617,7 @@ Now, it prints 4 3 2 1 0
 ### multiply
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `*` | - [x] | 1 |
+| `*` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -631,7 +631,7 @@ Now, it prints 4 3 2 1 0
 ### divide
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `/` | - [x] | 1 |
+| `/` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -645,7 +645,7 @@ Now, it prints 4 3 2 1 0
 ### modulo
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `%` | - [x] | 2 |
+| `%` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -656,7 +656,7 @@ Now, it prints 4 3 2 1 0
 ### power
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `^` | - [x] | 2 |
+| `^` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -667,7 +667,7 @@ Now, it prints 4 3 2 1 0
 ### copy
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `c` | - [x] | 1 |
+| `c` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -678,7 +678,7 @@ Now, it prints 4 3 2 1 0
 ### index
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `i` | - [x] | 2 |
+| `i` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -692,7 +692,7 @@ Now, it prints 4 3 2 1 0
 ### table
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `t` | - [x] | 2 |
+| `t` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -704,7 +704,7 @@ Now, it prints 4 3 2 1 0
 ### sizeof
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `z` | - [x] | 1 |
+| `z` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -715,31 +715,19 @@ Now, it prints 4 3 2 1 0
 ### type
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `y` | - [x] | 1 |
+| `y` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
 | --- | --- |
 | (any) | Returns a number equal to the global identifier of the same name (NUMBER, ARRAY, OPERATION, EXTERNAL) |
-| (any, number) | Returns arg0 typecasted to the type passed in arg1. Recommended to use the global identifiers mentioned before.
-If a number is passed in arg0, casting it to an ARRAY will stringify the number.
-If a number is passed in arg0, casting it to an OPERATION will return an operation with the character set to the number.
-If a number is passed in arg0, casting it to EXTERNAL will fail
-
-If an array is passed in arg0, casting it to a NUMBER will expect a string and turn that string into a number
-If an array is passed in arg0, casting it to an OPERATION will expect a number for the operation character as a number in the first position, and an array in the next position for the arguments
-If an array is passed in arg0, casting it to EXTERNAL will fail
-
-If an operation is passed in arg0, casting it to a number will return a number equal to the character the operation represents
-If an operation is passed in arg0, casting it to an array will return an array with a number the operation represents as a char and the args as an array in the second position
-
-If an external value is passed in arg0, it will fail regardless |
+| (any, number) | Returns arg0 typecasted to the type passed in arg1. Recommended to use the global identifiers mentioned before. <br>If a number is passed in arg0, casting it to an ARRAY will stringify the number. <br>If a number is passed in arg0, casting it to an OPERATION will return an operation with the character set to the number. <br>If a number is passed in arg0, casting it to EXTERNAL will fail <br><br>If an array is passed in arg0, casting it to a NUMBER will expect a string and turn that string into a number <br>If an array is passed in arg0, casting it to an OPERATION will expect a number for the operation character as a number in the first position, and an array in the next position for the arguments <br>If an array is passed in arg0, casting it to EXTERNAL will fail <br><br>If an operation is passed in arg0, casting it to a number will return a number equal to the character the operation represents <br>If an operation is passed in arg0, casting it to an array will return an array with a number the operation represents as a char and the args as an array in the second position <br>If an external value is passed in arg0, it will fail regardless |
 
 
 ### equal
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `=` | - [x] | 2 |
+| `=` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -751,7 +739,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### less than
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `<` | - [x] | 2 |
+| `<` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -762,7 +750,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### greater than
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `>` | - [x] | 2 |
+| `>` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -773,7 +761,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### if
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `f` | - [ ] | 2 |
+| `f` | no | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -784,7 +772,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### loop
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `l` | - [ ] | 2 |
+| `l` | no | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -795,7 +783,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### set (write)
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `w` | - [x] | 2 |
+| `w` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -806,7 +794,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### eval
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `e` | - [x] | 2 |
+| `e` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -819,7 +807,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### file
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `o` | - [x] | 1 |
+| `o` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -833,7 +821,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### logical and
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `&` | - [x] | 2 |
+| `&` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -845,7 +833,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### logical or
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `|` | - [x] | 2 |
+| `\|` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -857,7 +845,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### logical not
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `!` | - [ ] | 1 |
+| `!` | no | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -868,7 +856,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### increment
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `n` | - [x] | 1 |
+| `n` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -880,7 +868,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### decrement
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `d` | - [x] | 1 |
+| `d` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -892,7 +880,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### external call
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `x` | - [x] | 2 |
+| `x` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -905,7 +893,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### hash
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `h` | - [x] | 1 |
+| `h` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -916,7 +904,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### scope stack control
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `k` | - [x] | 1 |
+| `k` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -927,7 +915,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### search
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `a` | - [x] | 2 |
+| `a` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -938,7 +926,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### random
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `g` | - [x] | 0 |
+| `g` | yes | 0 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -951,7 +939,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### sort
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `q` | - [x] | 1 |
+| `q` | yes | 1 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -963,7 +951,7 @@ If an external value is passed in arg0, it will fail regardless |
 ### array setup
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
 | --- | --- | --- |
-| `u` | - [x] | 2 |
+| `u` | yes | 2 |
 
 #### Behavior with different parameters
 | Arguments | Behavior |
@@ -975,41 +963,41 @@ If an external value is passed in arg0, it will fail regardless |
 ## Operation Quick Reference
 | Character | Explicit Arguments Allowed | Implicit Argument Count | Notes |
 | --- | --- | --- | --- |
-| `p` | - [x] | 1 | print |
-| `s` | - [x] | 1 | stringify |
-| `r` | - [x] | 0 | console read |
-| `+` | - [x] | 1 | addition/concat/positive |
-| `-` | - [x] | 1 | subtraction/remove/negative |
-| `*` | - [x] | 1 | multiplication/combination/square |
-| `/` | - [x] | 1 | division/split/sqrt |
-| `%` | - [x] | 2 | modulo |
-| `^` | - [x] | 2 | power |
-| `c` | - [x] | 1 | copy |
-| `i` | - [x] | 2 | index |
-| `t` | - [x] | 2 | table get/set |
-| `z` | - [x] | 1 | sizeof |
-| `y` | - [x] | 1 | type/typecast |
-| `=` | - [x] | 2 | equality test |
-| `<` | - [x] | 2 | less than |
-| `>` | - [x] | 2 | greater than |
-| `f` | - [ ] | 2 | if |
-| `l` | - [ ] | 2 | loop |
-| `w` | - [x] | 2 | write(set) |
-| `e` | - [x] | 2 | eval |
-| `m` | - [x] | 1 | import/parse string |
-| `o` | - [x] | 1 | file read/file write |
-| `&` | - [x] | 2 | logical and |
-| `\|` | - [x] | 2 | logical or |
-| `!` | - [ ] | 1 | logical not |
-| `n` | - [x] | 1 | increment by 1/increment by any |
-| `d` | - [x] | 1 | decrement by 1/decrement by any |
-| `x` | - [x] | 2 | external call |
-| `h` | - [x] | 1 | recursive hash |
-| `k` | - [x] | 1 | scope stack control |
-| `a` | - [x] | 2 | find |
-| `g` | - [x] | 0 | generate(rand)/random to max/random within range |
-| `q` | - [x] | 1 | quicksort array/quicksort all arguments |
-| `u` | - [x] | 2 | array setup X number of elements to 0/array setup to X number of elements to X |
+| `p` | yes | 1 | print |
+| `s` | yes | 1 | stringify |
+| `r` | yes | 0 | console read |
+| `+` | yes | 1 | addition/concat/positive |
+| `-` | yes | 1 | subtraction/remove/negative |
+| `*` | yes | 1 | multiplication/combination/square |
+| `/` | yes | 1 | division/split/sqrt |
+| `%` | yes | 2 | modulo |
+| `^` | yes | 2 | power |
+| `c` | yes | 1 | copy |
+| `i` | yes | 2 | index |
+| `t` | yes | 2 | table get/set |
+| `z` | yes | 1 | sizeof |
+| `y` | yes | 1 | type/typecast |
+| `=` | yes | 2 | equality test |
+| `<` | yes | 2 | less than |
+| `>` | yes | 2 | greater than |
+| `f` | no | 2 | if |
+| `l` | no | 2 | loop |
+| `w` | yes | 2 | write(set) |
+| `e` | yes | 2 | eval |
+| `m` | yes | 1 | import/parse string |
+| `o` | yes | 1 | file read/file write |
+| `&` | yes | 2 | logical and |
+| `\|` | yes | 2 | logical or |
+| `!` | no | 1 | logical not |
+| `n` | yes | 1 | increment by 1/increment by any |
+| `d` | yes | 1 | decrement by 1/decrement by any |
+| `x` | yes | 2 | external call |
+| `h` | yes | 1 | recursive hash |
+| `k` | yes | 1 | scope stack control |
+| `a` | yes | 2 | find |
+| `g` | yes | 0 | generate(rand)/random to max/random within range |
+| `q` | yes | 1 | quicksort array/quicksort all arguments |
+| `u` | yes | 2 | array setup X number of elements to 0/array setup to X number of elements to X |
 
 
 ## Default Interpreter Identifiers
