@@ -1,0 +1,5 @@
+[
+	+("<html><h1>query data:</h1><hr>" st(i_0 "query") "<br><br>persisted variable: " snPERSIST "</html>")
+	200
+	"text/html"
+]

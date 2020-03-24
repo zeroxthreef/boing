@@ -1,0 +1,5 @@
+xOS_SRAND[xOS_TIME[]]
+p("random number: " g])
+p("random number: " g(5))
+p("random number: " g(-3000 3000))
+p("random number: " xFLOOR[g(-3000 3000)])

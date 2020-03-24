@@ -1,0 +1,66 @@
+#!../boing
+wWIDTH 80
+wHEIGHT 24
+wMAXITERS 70
+wSCALEFACTOR '0.04'
+wXOFFSET '0.0'
+wYOFFSET '0.0F'
+wBENCHMARK 1
+
+wPIXTYPES[" " "." "^" "~" "+" "*" "C" "O" "=" "$" "%" "#" "@"]
+
+wXITER 0
+wYITER 0
+wITER 0
+
+wX 0
+wY 0
+wXX 0
+wYY 0
+wTX 0
+
+
+wCALCPIX
+{
+	/(*(iARGS 0  12) MAXITERS)
+}
+
+
+p"mandelbrot:"
+
+l(<YITER HEIGHT)
+{
+	wLINE "" #the line to print
+	wXITER 0
+	l(<XITER WIDTH)
+	{
+		wXX +(*(-(XITER /(WIDTH 2)) SCALEFACTOR) XOFFSET)
+		wYY +(*(-(YITER /(HEIGHT 2)) *(SCALEFACTOR 2)) XOFFSET)
+
+		#l(<(&(<(+(*(X X) *(Y Y)) 4) ITER) +(MAXITERS 1)))
+		l(&( <(  +( *(X X) *(Y Y) )   4)  <(ITER MAXITERS)))
+		{
+			wTX +(-(*(X X) *(Y Y)) XX)
+			wY +(*(2 X Y) YY)
+			wX TX
+
+			#wITER +(ITER 1)
+			nITER
+		}
+
+		wLINE +(LINE i(PIXTYPES eCALCPIX[ITER]))
+
+		wITER 0
+		wX 0
+		wY 0
+
+
+		#wXITER+(XITER 1) # no inc op yet
+		nXITER
+	}
+
+	pLINE
+
+	#wYITER+(YITER 1) # no inc op yet
+	nYITER
+}

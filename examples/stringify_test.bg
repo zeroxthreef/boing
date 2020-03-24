@@ -1,0 +1,16 @@
+wSCRIPT m(o"examples/mandelbrot.bg" "mbrot script")
+
+wSCRIPT_STRINGIFIED_MIN s(SCRIPT FALSE)
+wSCRIPT_STRINGIFIED_READ s(SCRIPT TRUE)
+
+wSCRIPT_PARSED_MIN m(SCRIPT_STRINGIFIED_MIN "mbrot minified")
+wSCRIPT_PARSED_READ m(SCRIPT_STRINGIFIED_READ "mbrot readable")
+
+0f=SCRIPT_STRINGIFIED_READ SCRIPT_PARSED_MIN
+{
+	p"minified and regular stringified parsed scripts are equal"
+}
+f1
+{
+	p"minified and regular stringified parsed scripts are NOT equal"
+}

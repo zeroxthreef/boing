@@ -1,0 +1,16 @@
+# test preserving a new scope stack
+
+wVAR "test"
+
+wSCRIPT
+{
+	p("the variable is " VAR) # first time, should print 0, after should print hello
+
+	wVAR "hello"
+}
+
+wSTACK k-1
+e(SCRIPT [] STACK FALSE) # print 0
+e(SCRIPT [] STACK FALSE) # print hello
+
+pVAR # print test

@@ -1,0 +1,18 @@
+wSOCK xOS_SOCKET[OS_AF_INET OS_SOCK_STREAM 0]
+
+0f(<(xOS_CONNECT[SOCK "127.0.0.1" 4000] 0))
+{
+	p"could not connect"
+}
+f1
+{
+	p"connected"
+
+	xOS_SEND[SOCK r]
+
+	p"waiting for server"
+	pxOS_RECV[SOCK -1]
+
+	p"exitting"
+}
+

@@ -1,0 +1,59 @@
+# a conversion of the other mandelbrot cli versions
+m"boing_screen.so"
+
+
+wWINDOW xSCREEN_CREATE_WINDOW["mandelbrot" 640 480 TRUE]
+
+wWIDTH 640
+wHEIGHT 480
+wMAXITERS 70
+wSCALEFACTOR '0.004'
+wXOFFSET '0.0'
+wYOFFSET '0.0F'
+wBENCHMARK 1
+
+wXITER 0
+wYITER 0
+wITER 0
+
+wX 0
+wY 0
+wXX 0
+wYY 0
+wTX 0
+
+l(<YITER HEIGHT)
+{
+	wLINE "" #the line to print
+	wXITER 0
+	l(<XITER WIDTH)
+	{
+		wXX +(*(-(XITER /(WIDTH 2)) SCALEFACTOR) XOFFSET)
+		wYY +(*(-(YITER /(HEIGHT 2)) *(SCALEFACTOR 2)) XOFFSET)
+
+
+		l(&( <(  +( *(X X) *(Y Y) )   4)  <(ITER MAXITERS)))
+		{
+			wTX +(-(*(X X) *(Y Y)) XX)
+			wY +(*(2 X Y) YY)
+			wX TX
+
+			
+			nITER
+		}
+
+		xSCREEN_DRAW_COLOR[WINDOW *(ITER 20) *(ITER 30) *(ITER 40) 255]
+		xSCREEN_DRAW_PIXEL[WINDOW XITER YITER]
+		xSCREEN_WINDOW_PRESENT[WINDOW]
+
+		wITER 0
+		wX 0
+		wY 0
+		
+		nXITER
+	}
+
+	p("line: " YITER)
+	
+	nYITER
+}

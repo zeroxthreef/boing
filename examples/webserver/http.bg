@@ -1,0 +1,223 @@
+wHTTP_TABLE_TEMPLATE
+[
+	["method" -1]    # GET POST, etc
+	["headers" []]   # will be formatted as another table inside
+	["post_data" []] # if POST, this will contain the post data
+	["query" -1]     # everything after ? in the url
+	["not_query" -1] # everything before ? in the url
+]
+
+wHTTP_STATUS
+[
+	[200 "OK"]
+	[400 "Bad Request"]
+	[403 "Forbidden"]
+	[404 "Not Found"]
+]
+
+wMIME_TYPES
+[
+	["bg" "text/boing"] # not really something but just used in the router
+	["html" "text/html"]
+	["htm" "text/html"]
+	["txt" "text/html"]
+	["aac" "audio/aac"]
+	["avi" "audio/avi"]
+	["bin" "application/octet-stream"]
+	["bmp" "image/bmp"]
+	["css" "text/css"]
+	["gif" "image/gif"]
+	["ico" "image/vnd.microsoft.icon"]
+	["jpeg" "image/jpeg"]
+	["jpg" "image/jpeg"]
+	["js" "text/javascript"]
+	["mp3" "audio/mpeg"]
+	["mpeg" "video/mpeg"]
+	["oga" "audio/ogg"]
+	["ogv" "video/ogg"]
+	["ogx" "application/ogg"]
+	["png" "image/png"]
+	["wav" "audio/wav"]
+	["weba" "audio/webm"]
+	["webm" "video/webm"]
+	["webp" "image/webp"]
+	["xhtml" "application/xhtml+xml"]
+	["xml" "text/xml"]
+	["zip" "application/zip"]
+]
+
+# array(table) HTTP_PARSE(array(string) recv_buffer)
+wHTTP_PARSE
+{
+	wRET cHTTP_TABLE_TEMPLATE
+	wSPLIT_NEWLINES /(i_0 "\r\n")
+	wMETHOD_SPLIT /(iSPLIT_NEWLINES0 " ")
+
+	# verify and parse method
+	0f(= zMETHOD_SPLIT 3)
+	{
+		wQUERY_SPLIT /(iMETHOD_SPLIT 1  "?")
+		
+		t(RET "method" iMETHOD_SPLIT 0)
+		t(RET "not_query" iQUERY_SPLIT0)
+
+		0f(= zQUERY_SPLIT 2)
+		{
+			t(RET "query" iQUERY_SPLIT 1)
+		}
+
+		# parse headers and post data
+
+		wI 1 # move past the method
+		l(& <(I zSPLIT_NEWLINES) !BREAK)
+		{
+			# test if an empty string. Means end of headers
+			0f(= zi(SPLIT_NEWLINES I) 0)
+			{
+				wBREAK 1
+			}
+			f1 #otherwise, split header and add to headers table
+			{
+				wSPLIT_HEADER /(i(SPLIT_NEWLINES I) ": ")
+				wHEADER_VALUE ""
+
+				# if theres a malformed header, just leave it as ""
+				0f(!= zSPLIT_HEADER 0)
+				{
+					wHEADER_VALUE iSPLIT_HEADER 1
+				}
+
+
+				t(t(RET "headers") iSPLIT_HEADER 0 HEADER_VALUE)
+			}
+
+			nI
+		}
+
+		# get the post data if there is any
+		
+		0f(t(t(RET "headers") "Content-Length"))
+		{
+			wCONTENT_LENGTH y( t(t(RET "headers") "Content-Length") NUMBER)
+
+			# test if the content-length header is lying
+			0f(< zi_0 CONTENT_LENGTH)
+			{
+				p"client lied about content length"
+			}
+			f1
+			{
+				t(RET "post_data" i(i_0  -(zi_0 CONTENT_LENGTH)  -1))
+			}
+		}
+
+		RET
+	}
+	f1
+	{
+		# return a 0 in an error case
+		wRET 0
+	}
+
+	RET
+}
+
+# array(string) HTTP_EXPORT(array(string) response, number status_code, array(table) headers)
+wHTTP_EXPORT
+{
+	wRESPONSE +("HTTP/1.0 " y(i_1 ARRAY) " " t(HTTP_STATUS i_1) "\r\n")
+
+	# overwrite the content length header just in case
+	t(i_2 "Content-Length" y(zRESPONSE ARRAY))
+
+	# add headers. Formatted as [["header" "value"] ...]
+	l(< I zi_2)
+	{
+		wRESPONSE +(RESPONSE i(i(i_2 I) 0) ": " i(i(i_2 I) 1) "\r\n" )
+
+		nI
+	}
+
+	wRESPONSE +(RESPONSE "\r\n\r\n" i_0)
+
+	RESPONSE
+}
+
+# array(string) HTTP_MIME(array(string) filename)
+wHTTP_MIME
+{
+	wSPLIT_FILE /(i_0 ".")
+	wEXT iSPLIT_FILE -(zSPLIT_FILE 1)
+	wRET "application/octet-stream"
+
+	0f(!= t(MIME_TYPES EXT) 0)
+	{
+		wRET t(MIME_TYPES EXT)
+	}
+
+	RET
+}
+
+# array(string) HTTP_URL_UNESCAPE(array(string) url)
+wHTTP_URL_UNESCAPE
+{
+	wUNESCAPE_RET ""
+	wSPLIT_PERCENT /(i_0 "%")
+
+	wI 1 # need to skip past the first
+
+	l(< I zSPLIT_PERCENT)
+	{
+		# make sure its as large or larger than 2
+		0f(< 1  ziSPLIT_PERCENT I)
+		{
+			# turn to hexadecimal so its easy to convert to number
+			wSTR_NUM +("0x" i(iSPLIT_PERCENT I    0   1))
+			wAFTER_STR ""
+
+			# test if theres anything after the escape
+			0f(< 2  ziSPLIT_PERCENT I)
+			{
+				wAFTER_STR i(iSPLIT_PERCENT I    2   -1)
+			}
+
+			# use the typecasting operation for hexadecimal to string
+			wiSPLIT_PERCENT I +([y(STR_NUM NUMBER)] AFTER_STR)
+		}
+
+		nI
+	}
+
+	wUNESCAPE_RET *(SPLIT_PERCENT "")
+}
+
+# HTTP_PARSE_QUERY turns the query data into a table
+# array(table) HTTP_PARSE_QUERY(array(string) query)
+wHTTP_PARSE_QUERY
+{
+	wQUERY_RET []
+
+	0f(=yi_0 ARRAY)
+	{
+		wSPLIT_AMPERSAND /(i_0 "&")
+
+		wI 0
+
+		l(< I zSPLIT_AMPERSAND)
+		{
+			wSPLIT_EQUALS /(iSPLIT_AMPERSAND I "=")
+			wVALUE ""
+
+			0f(< 1 zSPLIT_EQUALS)
+			{
+				wVALUE iSPLIT_EQUALS1
+			}
+
+			t(QUERY_RET e(HTTP_URL_UNESCAPE[iSPLIT_EQUALS0] k0) e(HTTP_URL_UNESCAPE[VALUE] k0))
+			
+			nI
+		}
+	}
+
+	QUERY_RET
+}

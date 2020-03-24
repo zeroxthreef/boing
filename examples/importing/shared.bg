@@ -1,0 +1,22 @@
+# START OF IMPORT GUARD PREFIX ===============
+0f(=SHARED_GUARD 0)
+{
+	wPLACE_INSIDE
+	{
+		nSHARED_GUARD
+		# END OF IMPORT GUARD PREFIX ========
+		# actual script code goes here
+
+		wSHARED_GLOBAL "hello, world!"
+
+		wSHARED_FUNCTION
+		{
+			*(i_0 i_1)
+		}
+
+		# START OF IMPORT GUARD POSTFIX ========
+	}
+
+	e(PLACE_INSIDE [] k0 FALSE)
+}
+# END OF IMPORT GUARD POSTFIX ==================

@@ -1,0 +1,21 @@
+# input read tests
+
+#p"please type a character: "
+#w(IN r)
+
+#p("you typed: '" IN "'")
+
+p"type a sentence"
+
+wIN r("\n")
+p("ok, " IN)
+
+p"type another sentence"
+
+wIN r(4)
+p("ok, " IN)
+
+p"last one"
+
+wIN r("\n")
+p("ok, " IN)

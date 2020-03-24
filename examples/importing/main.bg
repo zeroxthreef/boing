@@ -1,0 +1,12 @@
+# import an external script but also
+# share a script between them
+
+m"examples/importing/external.bg"
+m"examples/importing/shared.bg"
+
+
+p("the shared global is: " SHARED_GLOBAL)
+
+p("result :" eSHARED_FUNCTION[2 4])
+
+p("external.bg things: " eEXTERNAL_RUN["in main.bg"])

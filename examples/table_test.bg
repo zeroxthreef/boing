@@ -1,0 +1,19 @@
+wTABLE[
+	["hello" 3]
+	["hello1" 5]
+	["hello2" 66]
+	["hello3" 89]
+]
+
+ptTABLE"hello5"
+
+t(TABLE "hello5" "value")
+
+ptTABLE"hello5"
+
+wTABLE_T[]
+t(TABLE_T "row1" "test")
+t(TABLE_T "row2" "test1")
+t(TABLE_T "row3" "test2")
+t(TABLE_T "row4" "test3")
+t(TABLE_T "row5" "test4")

@@ -1,0 +1,29 @@
+p("types: " "array: " ARRAY " number: " NUMBER " operation: " OPERATION " external: " EXTERNAL)
+p("thing: " y[])
+p("thing: " y4)
+p("thing: " y{p"test"})
+p("thing: " ySIN)
+
+p"and now casting:"
+
+#string -> num num -> string
+
+p("thing: " y("-123" NUMBER))
+p("thing: " y("9123.060" NUMBER))
+
+p("thing: " y(-123 ARRAY))
+p("thing: " y('9123.060' ARRAY))
+
+
+# array -> op op -> array
+
+p("thing: " y([112 ["hello"]] OPERATION))
+
+p("thing: " y({p"hello"} ARRAY))
+
+
+# op -> num num -> op
+
+p("thing: " y({p"hello"} NUMBER))
+
+p("thing: " y(112 OPERATION))

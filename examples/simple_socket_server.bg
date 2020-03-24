@@ -1,0 +1,44 @@
+wPORT 4000
+wNEWSOCK 0
+p("start socket test on port " PORT)
+
+wSOCK xOS_SOCKET[OS_AF_INET OS_SOCK_STREAM 0]
+
+0f(xOS_SETSOCKOPT[SOCK])
+{
+	p"could not setsockopt"
+}
+
+0f(<(xOS_BIND[SOCK OS_AF_INET OS_INADDR_ANY PORT] 0) )
+{
+	p("could not bind to port " PORT)
+}
+f1
+{
+	p("socket bound to port " PORT)
+}
+
+0f(<(xOS_LISTEN[SOCK 5] 0) )
+{
+	p("could not listen on port " PORT)
+}
+f1
+{
+	p("socket listening to port " PORT)
+}
+
+0f(<(xOS_ACCEPT[SOCK NEWSOCK] 0) )
+{
+	p("could not accept on port " PORT)
+}
+f1
+{
+	# echo back to client then exit
+	p("socket accepted on port " PORT)
+
+	p"waiting for client data"
+	wDATA xOS_RECV[NEWSOCK -1]
+
+	p"sending client data"
+	xOS_SEND[NEWSOCK DATA]
+}

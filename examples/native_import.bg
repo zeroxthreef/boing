@@ -1,0 +1,5 @@
+#can import multiple times but the init and destroy functions only run once
+m"modules/example/libboing_example.so"
+m"modules/example/libboing_example.so"
+
+p("data from the example module: " EXAMPLE_GLOBAL)

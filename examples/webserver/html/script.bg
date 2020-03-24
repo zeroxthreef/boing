@@ -1,0 +1,23 @@
+# for everything to be correct, the return
+# value of this script must be a array 
+# formatted like:
+# [response_body(array) status_code(number) content_type(array)]
+
+# very very simple example of this:
+
+wPERSIST PERSIST
+
+# functions desired to persist
+wHTTP_PARSE_QUERY HTTP_PARSE_QUERY
+wHTTP_URL_UNESCAPE HTTP_URL_UNESCAPE
+0f(!HTTP_PARSE_QUERY)
+{
+	p"importing"
+	m"examples/webserver/http.bg"
+}
+
+[
+	+("<html><h1>http data:</h1><hr>" si_0 "<br><br>persisted variable: " snPERSIST "<br>parsed query: " seHTTP_PARSE_QUERY[t(i_0 "query")] "</html>")
+	200
+	"text/html"
+]

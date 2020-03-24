@@ -1,0 +1,212 @@
+m+(INTERPRETER_OFFSET "http.bg")
+
+wLOG_LOCATION "webserver.log"
+wSHARED_SCRIPT_STACK k-1 # the stack shared across all scripts run
+
+wSIMPLE_ROUTES
+[
+	["/test" "<html><h1>cool</h1>this was a literal</html>"]
+	["/function" {+("<html><b>you:" sxOS_GET_IPVFOUR[i_0] "</b></html>")}]
+]
+
+# array(string) ROUTER(external socket, array(string) recv_buffer)
+wROUTER
+{
+	wSOCKET_RESPONSE "" # need to declare it out here so it exists outside of the if
+	wHTTP_DATA eHTTP_PARSE[i_1]
+
+
+	0f(=(HTTP_DATA 0))
+	{
+		eROUTER_LOG["router" "error" +("client " xOS_GET_IPVFOUR[i_0] " made an invalid http request")]
+
+		wSOCKET_RESPONSE eHTTP_EXPORT["<html><h1>404</h1>Bad Request</html>" 400 []]
+	}
+	f1
+	{
+		wRESOURCE eROUTER_PATH_FINALIZE[t(HTTP_DATA "not_query")]
+		eROUTER_LOG["router" "notification" +("client " xOS_GET_IPVFOUR[i_0] " requested " t(HTTP_DATA "not_query"))]
+		# ======================================
+
+		wSOCKET_RESPONSE eHTTP_EXPORT["<html><h1>404</h1>Not Found</html>" 404 []]
+
+		# first, route through simple routes
+		wEVAL_DATA t(SIMPLE_ROUTES RESOURCE)
+		0f(!=(EVAL_DATA 0))
+		{
+			# eval whatever is in the simple route
+			wSOCKET_RESPONSE eHTTP_EXPORT[ eEVAL_DATA[i_0 HTTP_DATA] 200 [["Content-Type" "text/html"]]]
+		}
+		f1
+		{
+			# look for disk files
+
+			# filter out ../ ~/ and so on
+
+			wRESOURCE *(/(RESOURCE "../") "/")
+			wRESOURCE *(/(RESOURCE "~/") "/")
+
+			# look for files
+			wFILE_RESPONSE eROUTER_FILE_LOOK[i_0 HTTP_DATA RESOURCE]
+
+			0f(!= FILE_RESPONSE 0)
+			{
+				wSOCKET_RESPONSE FILE_RESPONSE
+			}
+		}
+
+		# ======================================
+	}
+	
+	SOCKET_RESPONSE
+}
+
+# array(string) ROUTER_FILE_LOOK(external socket, array(table) http_data, array(string) path)
+wROUTER_FILE_LOOK
+{
+	wLOOK_PATH +(INTERPRETER_OFFSET SERVE_DIRECTORY i_2)
+	wRET 0
+	
+	0f(xOS_IS_DIR[LOOK_PATH])
+	{
+		# create a list for the directory and
+		# determine whether or not to return a
+		# directory list page or return the first
+		# index.X
+
+		wDIRECTORY xOS_LIST_DIR[LOOK_PATH]
+		wINDEX 0
+
+		# look for an index
+		l(&(< I zDIRECTORY  !INDEX))
+		{
+			wFILE_NO_EXT /(iDIRECTORY I  ".")
+
+			0f(= iFILE_NO_EXT0 "index")
+			{
+				wINDEX iDIRECTORY I
+			}
+
+			nI
+		}
+
+		0f(INDEX)
+		{
+			# serve the index
+			wINDEX +(LOOK_PATH "/" INDEX)
+			wRET e(ROUTER_HANDLE_FILE[i_0 i_1 INDEX] k0)
+		}
+		f1
+		{
+			# show the directory listing
+			wRET e(ROUTER_DIR_PAGE [i_2 DIRECTORY i_1] k0)
+		}
+	}
+	f(xOS_IS_FILE[LOOK_PATH])
+	{
+		# determine if a .bg file and run if so
+		wRET e(ROUTER_HANDLE_FILE[i_0 i_1 LOOK_PATH] k0)
+	}
+	
+	RET
+}
+
+#array(string) ROUTER_DIR_PAGE(array(string) path, array dir, array(table) http_data)
+wROUTER_DIR_PAGE
+{
+	wPAGE +("<!DOCTYPE html><html><head><title>Directory listing for " i_0 "</title></head><body>")
+
+	wPAGE +(PAGE "<h1>Directory listing for " i_0 "</h1><hr>")
+
+	# sort the contents first
+	wi_1 qi_1
+
+	l(< I zi_1)
+	{
+		wPAGE +(PAGE "<a href=\"" i(i_1 I) "/\">" i(i_1 I) "</a><br>\n")
+
+		nI
+	}
+
+
+	wPAGE +(PAGE "</body></html>")
+	eHTTP_EXPORT[ PAGE 200 [["Content-Type" "text/html"]]]
+}
+
+# array(string) ROUTER_HANDLE_FILE(external socket, array(table) http_data, array(string) path)
+wROUTER_HANDLE_FILE
+{
+	wRET 0
+	wLOOK_PATH i_2 # do this because we technically have access to the old LOOK_PATH
+						# but itd be bad to try and assume thats always the case
+
+	0f(= eHTTP_MIME[LOOK_PATH] "text/boing")
+	{
+		eROUTER_LOG["router" "notification" +("evaluating script " LOOK_PATH)]
+
+		wSCRIPT_RET e(m(oLOOK_PATH LOOK_PATH) [i_1] SHARED_SCRIPT_STACK FALSE)
+
+		# check for validity of return data
+		0f(!= zSCRIPT_RET 3)
+		{
+			eROUTER_LOG["router" "error" +("script error in " LOOK_PATH)] 
+		}
+		f1
+		{
+			wRET eHTTP_EXPORT[ iSCRIPT_RET0 iSCRIPT_RET1 [["Content-Type" iSCRIPT_RET2]]]
+		}
+	}
+	f1
+	{
+		# just return the file
+		wRET eHTTP_EXPORT[ oLOOK_PATH 200 [["Content-Type" eHTTP_MIME[LOOK_PATH]]]]
+	}
+
+	RET
+}
+
+# void return and no arguments
+wROUTER_INIT
+{
+	eROUTER_LOG["router" "notification" "initializing router"] 
+}
+
+# number(doesnt matter) ROUTER_LOG(array(string) type, array(string) severity, array(string) message)
+wROUTER_LOG
+{
+	wFINAL_STR +("[" i_0 "]" "[" i_1 "]" "[" i_2 "]")
+	0f(!oLOG_LOCATION)
+	{
+		o(LOG_LOCATION "")
+	}
+	
+	xOS_FILE_APPEND[LOG_LOCATION +(FINAL_STR "\n")]
+	pFINAL_STR
+}
+
+# array(string) ROUTER_PATH_FINALIZE(array(string) before_path)
+wROUTER_PATH_FINALIZE
+{
+	# make a path nicer for the router
+	wPATH_SPLIT /(i_0 "/")
+	wRET ""
+
+	l(< I zPATH_SPLIT)
+	{
+		0f(> ziPATH_SPLIT I  0)
+		{
+			wRET +(RET "/" iPATH_SPLIT I)
+		}
+
+		nI
+	}
+
+	0f(= zRET 0)
+	{
+		wRET "/"
+	}
+
+	wRET eHTTP_URL_UNESCAPE[RET]
+
+	RET
+}

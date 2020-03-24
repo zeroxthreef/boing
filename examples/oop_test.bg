@@ -1,0 +1,43 @@
+# objects arent natively supported in boing but
+# it is possible to sorta simulate oop
+
+wOBJECT_TEST
+[
+	# constr and destr
+	["constructor" {
+		wTHIS i(ARGS 0)
+
+		p"constructor called"
+	}]
+	["destructor" {
+		wTHIS i(ARGS 0)
+
+		p"destructor called"
+	}]
+
+	# members
+	["x" 5]
+	["y" 5]
+
+	# methods
+	["div_x_by_num" {
+		wTHIS i(ARGS 0)
+
+		#w t(THIS "x" /(tTHIS "x"  i(ARGS 1)))
+	}]
+
+	["print_x_times_y" {
+		wTHIS i(ARGS 0)
+
+		p*(tTHIS "x" tTHIS "y")
+	}]
+]
+
+# make an instance (copy)
+wOBJECT_INSTANCE cOBJECT_TEST
+
+# call the constructor
+etOBJECT_INSTANCE"constructor"[OBJECT_INSTANCE]
+
+# call the print x * y method
+etOBJECT_INSTANCE"print_x_times_y"[OBJECT_INSTANCE]

@@ -1,0 +1,321 @@
+# test all "math" operations and most
+# possibilities of arguments. Note, 
+# most of the special array at arg0
+# possibilities can have multiple
+# following arguments, but they arent
+# necessary to test here.
+
+
+# ========= '+' ===========
+
+# '+' make number positive
+0f (!=+'-1'1)
+{
+	p"failed absolute value"
+}
+f1
+{
+	p"passed absolute value"
+}
+
+# '+' array sum
+
+0f (!=+[2 4 1] 7)
+{
+	p"failed array sum"
+}
+f1
+{
+	p"passed array sum"
+}
+
+# '+' argument sum
+
+0f (!=+(4 5 6) 15)
+{
+	p"failed argument sum"
+}
+f1
+{
+	p"passed argument sum"
+}
+
+# '+' array concat strings
+
+0f (!=+("hello " "world") "hello world")
+{
+	p"failed array concat (strings)"
+}
+f1
+{
+	p"passed array concat (strings)"
+}
+
+# '+' array concat string + number & no array container
+
+0f (!=+("hello " 63) "hello ?")
+{
+	p"failed array concat (string + number no array container)"
+}
+f1
+{
+	p"passed array concat (string + number no array container)"
+}
+
+# '+' array concat string + number & with array container
+
+0f (!=+("hello " [63]) "hello ?")
+{
+	p"failed array concat (string + number with array container)"
+}
+f1
+{
+	p"passed array concat (string + number with array container)"
+}
+
+# '+' array concat array + array
+
+0f (!=+([1 2 3 4] [5 [89]]) [1 2 3 4 5 [89]])
+{
+	p"failed array concat (array + array)"
+}
+f1
+{
+	p"passed array concat (array + array)"
+}
+
+# '+' add number and string (convert string to number in addition)
+0f (!=+(3 "5") 8)
+{
+	p"failed add number and string (convert string to number in addition)"
+}
+f1
+{
+	p"passed add number and string (convert string to number in addition)"
+}
+
+# ========= '-' ===========
+
+# '-' force number negative
+0f (!=-1'-1')
+{
+	p"failed force negative value"
+}
+f1
+{
+	p"passed force negative value"
+}
+
+# '-' array difference
+0f (!=-[5 2 1] 2)
+{
+	p"failed array difference"
+}
+f1
+{
+	p"passed array difference"
+}
+
+# '-' argument difference
+0f (!=-(5 2 1) 2)
+{
+	p"failed argument difference"
+}
+f1
+{
+	p"passed argument difference"
+}
+
+# '-' array remove (string + string)
+0f (!=-("test" "t") "es")
+{
+	p"failed array remove (string + string)"
+}
+f1
+{
+	p"passed array remove (string + string)"
+}
+
+# '-' array remove (string + number no array container)
+0f (!=-("te?st?" 63) "test")
+{
+	p"failed array remove (string + number no array container)"
+}
+f1
+{
+	p"passed array remove (string + number no array container)"
+}
+
+# '-' array remove (string + number with array container)
+0f (!=-("te?st?" [63]) "test")
+{
+	p"failed array remove (string + number with array container)"
+}
+f1
+{
+	p"passed array remove (string + number with array container)"
+}
+
+# '-' array remove (array + array)
+0f (!=-([2 4 6 9 34 7 4] [4]) [2 6 9 34 7])
+{
+	p"failed array remove (array + array)"
+}
+f1
+{
+	p"passed array remove (array + array)"
+}
+
+# '-' number and string difference
+0f (!=-(6 "3") 3)
+{
+	p"failed number and string difference"
+}
+f1
+{
+	p"passed number and string difference"
+}
+
+# ======= * =========
+
+# '*' number square
+0f (!=*4 16)
+{
+	p"failed number square"
+}
+f1
+{
+	p"passed number square"
+}
+
+# '*' array multiplication
+0f (!=*[2 2 2] 8)
+{
+	p"failed array multiplication"
+}
+f1
+{
+	p"passed array multiplication"
+}
+
+# '*' argument multiplication
+0f (!=*(2 2 2) 8)
+{
+	p"failed argument multiplication"
+}
+f1
+{
+	p"passed argument multiplication"
+}
+
+# '*' string recombination (array + number no container)
+0f (!=*(["hello" "world"] 63) "hello?world")
+{
+	p"failed string recombination (array + number no container)"
+}
+f1
+{
+	p"passed string recombination (array + number no container)"
+}
+
+# '*' string recombination (array + number with container)
+0f (!=*(["hello" "world"] [63]) "hello?world")
+{
+	p"failed string recombination (array + number with container)"
+}
+f1
+{
+	p"passed string recombination (array + number with container)"
+}
+
+# '*' string recombination (array + array)
+0f (!=*(["hello" "world"] " ") "hello world")
+{
+	p"failed string recombination (array + array)"
+}
+f1
+{
+	p"passed string recombination (array + array)"
+}
+
+# '*' number and string multiplication
+0f (!=*(2 2 "2") 8)
+{
+	p"failed number and string multiplication"
+}
+f1
+{
+	p"passed number and string multiplication"
+}
+
+# ========= '/' ===========
+
+# '/' square root number
+0f (!=/4 2)
+{
+	p"failed square root number"
+}
+f1
+{
+	p"passed square root number"
+}
+
+# '/' array quotient
+0f (!=/[8 2 2] 2)
+{
+	p"failed array quotient"
+}
+f1
+{
+	p"passed array quotient"
+}
+
+# '/' argument quotient
+0f (!=/(8 2 2) 2)
+{
+	p"failed argument quotient"
+}
+f1
+{
+	p"passed argument quotient"
+}
+
+# '/' string tokenization (array + number no container)
+0f (!=/("hello?world" 63) ["hello" "world"])
+{
+	p"failed string tokenization (array + number no container)"
+}
+f1
+{
+	p"passed string tokenization (array + number no container)"
+}
+
+# '/' string tokenization (array + number with container)
+0f (!=/("hello?world" [63]) ["hello" "world"])
+{
+	p"failed string tokenization (array + number with container)"
+}
+f1
+{
+	p"passed string tokenization (array + number with container)"
+}
+
+# '/' string tokenization (array + array)
+0f (!=/("hello world" "l") ["he" "" "o wor" "d"])
+{
+	p"failed string tokenization (array + array)"
+}
+f1
+{
+	p"passed string tokenization (array + array)"
+}
+
+# '/' number and string quotient
+0f (!=/(4 "2") 2)
+{
+	p"failed number and string quotient"
+}
+f1
+{
+	p"passed number and string quotient"
+}

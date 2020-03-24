@@ -1,0 +1,25 @@
+# START OF IMPORT GUARD PREFIX ===============
+0f(=EXTERNAL_GUARD 0)
+{
+	wPLACE_INSIDE
+	{
+		nEXTERNAL_GUARD
+		# END OF IMPORT GUARD PREFIX ========
+
+
+		m"examples/importing/shared.bg"
+
+		# and parse to eval test
+		wSCRIPT m("+(\"hello, im from inside: \" i_0)" "internal_script")
+
+		wEXTERNAL_RUN
+		{
+			eSCRIPT[i_0]
+		}
+
+		# START OF IMPORT GUARD POSTFIX ========
+	}
+
+	e(PLACE_INSIDE [] k0 FALSE)
+}
+# END OF IMPORT GUARD POSTFIX ==================

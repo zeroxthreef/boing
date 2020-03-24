@@ -1,0 +1,41 @@
+m"boing_screen.so"
+
+
+wWINDOW xSCREEN_CREATE_WINDOW["boing" 640 480 TRUE]
+wQUIT 0
+
+wMOUSE_STATUS 0
+
+l!QUIT
+{
+	wEVENT 0
+
+	l(xSCREEN_POLL_EVENT[EVENT])
+	{
+
+		0f(= tEVENT"type"  SCREEN_QUIT)
+		{
+			nQUIT
+		}
+		f(= tEVENT"type" SCREEN_MOUSEBUTTONDOWN)
+		{
+			wMOUSE_STATUS 1
+		}
+		f(= tEVENT"type" SCREEN_MOUSEBUTTONUP)
+		{
+			wMOUSE_STATUS 0
+		}
+		f(= tEVENT"type" SCREEN_MOUSEMOTION)
+		{
+			0fMOUSE_STATUS
+			{
+				xSCREEN_DRAW_COLOR[WINDOW tEVENT"x" tEVENT"y" tEVENT"x" tEVENT"y"]
+				xSCREEN_DRAW_PIXEL[WINDOW tEVENT"x" tEVENT"y"]
+			}
+		}
+	}
+
+	xSCREEN_WINDOW_PRESENT[WINDOW]
+
+	xSCREEN_DELAY[16]
+}

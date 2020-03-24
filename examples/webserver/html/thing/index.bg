@@ -1,0 +1,13 @@
+wHTTP_PARSE_QUERY HTTP_PARSE_QUERY
+wHTTP_URL_UNESCAPE HTTP_URL_UNESCAPE
+0f(!HTTP_PARSE_QUERY)
+{
+	p"importing"
+	m"examples/webserver/http.bg"
+}
+
+[
+	+("<html><h1>http data:</h1><hr>" si_0 "<br><br>persisted variable: " snPERSIST "<br>parsed query: " seHTTP_PARSE_QUERY[t(i_0 "query")] "</html>")
+	200
+	"text/html"
+]

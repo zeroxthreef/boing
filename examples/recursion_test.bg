@@ -1,0 +1,14 @@
+wRECURSE
+{
+	# "reverse" print the numbers to the max
+	wCURRENT i_0
+
+	0f!=CURRENT i_1
+	{
+		e(RECURSE [ncCURRENT i_1] k0) # pass the root stack
+	}
+	pCURRENT
+}
+
+# to avoid overwriting each levels variables, just pass the root stack
+eRECURSE [1 10]

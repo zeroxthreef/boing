@@ -1,0 +1,2 @@
+psq("loooooooooooooooooong" "hello" "test" "cool")
+psq(["loooooooooooooooooong" "hello" "test" "cool" "abc"])

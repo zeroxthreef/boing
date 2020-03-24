@@ -1,0 +1,58 @@
+# this file is used to test currently in development
+# features. It may change frequently.
+
+m"boing_screen.so"
+
+
+wWINDOW xSCREEN_CREATE_WINDOW["boing" 640 480 TRUE]
+wQUIT 0
+
+
+wFONT_DATA o"/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"
+wFONT xSCREEN_CREATE_FONT[FONT_DATA 80 SCREEN_FONT_QUALITY_BLENDED]
+
+xSCREEN_SET_FONT_STYLE[FONT SCREEN_FONT_STYLE_ITALIC]
+xSCREEN_SET_FONT_STYLE[FONT SCREEN_FONT_STYLE_STRIKETHROUGH]
+
+
+wTEXTURE xSCREEN_CREATE_TEXTURE_IMAGE[WINDOW o"../examples/screen_module/smiley.png" TRUE]
+
+wI 0
+
+l!QUIT
+{
+	wEVENT 0
+
+	l(xSCREEN_POLL_EVENT[EVENT])
+	{
+
+		0f(= tEVENT"type"  SCREEN_QUIT)
+		{
+			nQUIT
+		}
+		f(= tEVENT"type" SCREEN_KEYDOWN)
+		{
+			wEV_KEY tEVENT"keysym"
+
+			0f(= tEV_KEY"keycode" SCREEN_KEY_ESCAPE)
+			{
+				nQUIT
+			}
+		}
+		
+	}
+
+
+	xSCREEN_DRAW_STRING[WINDOW FONT "hello" [0 255 255 255] [255 0 0 255] 0 0]
+
+	xSCREEN_DRAW_TEXTURE[WINDOW TEXTURE 0 0]
+
+
+	# ========================================
+	xSCREEN_WINDOW_PRESENT[WINDOW]
+
+	xSCREEN_DELAY[16]
+
+	xSCREEN_DRAW_COLOR[WINDOW 0 0 0 255]
+	xSCREEN_DRAW_RECT[WINDOW xSCREEN_RECT[0 0 640 480]]
+}

@@ -1,0 +1,26 @@
+# a syntax test
+
+p"strarting test"
+
+wTEST_IDENTIFIER 7
+
+wTEST_FUNCTION
+{
+	0f= iARGS0 "hello"
+	{
+		p"the argument at pos 0 was hello"
+	}
+	f= iARGS0 "world"
+	{
+		wI 0
+		l<I TEST_IDENTIFIER
+		{
+			p("world "I " " TEST_IDENTIFIER)
+			wI +(I1)
+		}
+	}
+}
+
+eTEST_FUNCTION["hello"]
+eTEST_FUNCTION["world"]
+#eTEST_FUNCTION0 # pretty much send nothing. Can replace 0 with ) though
