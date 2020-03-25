@@ -515,7 +515,7 @@ struct boing_t
 
 #define BOING_VERSION_MAJOR 0
 #define BOING_VERSION_MINOR 0
-#define BOING_VERSION_REVISION 2
+#define BOING_VERSION_REVISION 3
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -6624,20 +6624,32 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 	switch(value->type)
 	{
 		case BOING_TYPE_VALUE_NUMBER:
-			if(floor(value->number) == value->number && value->number < 0.0)
-				fmt = "%g"; /* will have its own negative sign */
-			else if(*previous_type == BOING_TYPE_VALUE_NUMBER && floor(value->number) == value->number && value->number >= 0.0)
-				fmt = " %g";
-			else if(floor(value->number) == value->number && value->number >= 0.0)
-				fmt = "%g";
-			else if(floor(value->number) != value->number)
-				fmt = "'%g'";
-			
-			if(!(ret = boing_str_sprintf(boing, fmt, value->number)))
+			if(*previous_type == BOING_TYPE_VALUE_NUMBER && floor(value->number) == value->number && value->number >= 0.0)
 			{
-				boing_error(boing, 0, "could not convert number into string");
-				return NULL;
+				if(!(ret = boing_str_sprintf(boing, " %d", (int)value->number)))
+				{
+					boing_error(boing, 0, "could not convert number into string");
+					return NULL;
+				}
 			}
+			else if(floor(value->number) == value->number && value->number >= 0.0)
+			{
+				if(!(ret = boing_str_sprintf(boing, "%d", (int)value->number)))
+				{
+					boing_error(boing, 0, "could not convert number into string");
+					return NULL;
+				}
+			}
+			else
+			{
+				if(!(ret = boing_str_sprintf(boing, "'%g'", value->number)))
+				{
+					boing_error(boing, 0, "could not convert number into string");
+					return NULL;
+				}
+			}
+			
+			
 
 			*previous_type = BOING_TYPE_VALUE_NUMBER;
 		break;
