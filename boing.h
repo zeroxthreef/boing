@@ -515,7 +515,7 @@ struct boing_t
 
 #define BOING_VERSION_MAJOR 0
 #define BOING_VERSION_MINOR 0
-#define BOING_VERSION_REVISION 1
+#define BOING_VERSION_REVISION 2
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -5747,10 +5747,13 @@ int boing_value_reference_dec(boing_t *boing, boing_value_t *value)
 			case BOING_TYPE_VALUE_ARRAY:
 				for(i = 0; i < value->length; ++i)
 				{
-					if(boing_value_reference_dec(boing, value->array[i]))
+					if(value->array[i]->references == 0 || --value->array[i]->references == 0)
 					{
-						boing_error(boing, 0, "could not decrement references in an array memeber");
-						return 1;
+						if(boing_value_reference_dec(boing, value->array[i]))
+						{
+							boing_error(boing, 0, "could not decrement references in an array memeber");
+							return 1;
+						}
 					}
 				}
 			break;
