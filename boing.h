@@ -35,6 +35,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <stdint.h>
 #include <setjmp.h>
 #include <ctype.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <math.h>
 
@@ -515,7 +516,7 @@ struct boing_t
 
 #define BOING_VERSION_MAJOR 0
 #define BOING_VERSION_MINOR 0
-#define BOING_VERSION_REVISION 3
+#define BOING_VERSION_REVISION 4
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -6624,7 +6625,7 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 	switch(value->type)
 	{
 		case BOING_TYPE_VALUE_NUMBER:
-			if(*previous_type == BOING_TYPE_VALUE_NUMBER && floor(value->number) == value->number && value->number >= 0.0)
+			if(((double)INT_MIN <= value->number && (double)INT_MAX >= value->number) && *previous_type == BOING_TYPE_VALUE_NUMBER && floor(value->number) == value->number && value->number >= 0.0)
 			{
 				if(!(ret = boing_str_sprintf(boing, " %d", (int)value->number)))
 				{
@@ -6632,7 +6633,7 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 					return NULL;
 				}
 			}
-			else if(floor(value->number) == value->number && value->number >= 0.0)
+			else if(((double)INT_MIN <= value->number && (double)INT_MAX >= value->number) && floor(value->number) == value->number && value->number >= 0.0)
 			{
 				if(!(ret = boing_str_sprintf(boing, "%d", (int)value->number)))
 				{
@@ -6642,7 +6643,7 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 			}
 			else
 			{
-				if(!(ret = boing_str_sprintf(boing, "'%g'", value->number)))
+				if(!(ret = boing_str_sprintf(boing, "'%f'", value->number)))
 				{
 					boing_error(boing, 0, "could not convert number into string");
 					return NULL;
