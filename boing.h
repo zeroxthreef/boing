@@ -435,6 +435,7 @@ struct boing_value_t
 	uint32_t line;
 	boing_value_t *script;
 	#endif
+	boing_pool_container_t *container;
 	uint32_t length, allocated, references;
 	uint8_t type;
 	union
@@ -515,8 +516,8 @@ struct boing_t
 /* global definitions */
 
 #define BOING_VERSION_MAJOR 0
-#define BOING_VERSION_MINOR 0
-#define BOING_VERSION_REVISION 4
+#define BOING_VERSION_MINOR 1
+#define BOING_VERSION_REVISION 0
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -578,10 +579,11 @@ int boing_pool_list_remove(boing_t *boing, boing_pool_t *pool, boing_pool_contai
 int boing_pool_list_inject(boing_t *boing, boing_pool_t *pool, boing_pool_container_t *at, boing_pool_container_t *container);
 int boing_pool_list_inject_after(boing_t *boing, boing_pool_t *pool, boing_pool_container_t *at, boing_pool_container_t *container);
 void *boing_pool_request(boing_t *boing, boing_pool_t *pool, size_t min_size);
-int boing_pool_add(boing_t *boing, boing_pool_t *pool, void *data, uint8_t taken, size_t size);
+int boing_pool_add(boing_t *boing, boing_pool_t *pool, void *data, uint8_t taken, size_t size, boing_pool_container_t **data_container);
 int boing_pool_shrink(boing_t *boing, boing_pool_t *pool);
 boing_pool_container_t *boing_pool_data_container(boing_t *boing, boing_pool_t *pool, void *data);
 int boing_pool_data_release(boing_t *boing, boing_pool_t *pool, void *data);
+int boing_pool_data_release_container(boing_t *boing, boing_pool_t *pool, boing_pool_container_t *container);
 
 char *boing_str_request(boing_t *boing, size_t size);
 int boing_str_create_free(boing_t *boing, size_t size);
@@ -4545,7 +4547,7 @@ void *boing_pool_request(boing_t *boing, boing_pool_t *pool, size_t min_size)
 	return NULL;
 }
 
-int boing_pool_add(boing_t *boing, boing_pool_t *pool, void *data, uint8_t taken, size_t size)
+int boing_pool_add(boing_t *boing, boing_pool_t *pool, void *data, uint8_t taken, size_t size, boing_pool_container_t **data_container)
 {
 	boing_pool_container_t *container = NULL;
 
@@ -4593,6 +4595,10 @@ int boing_pool_add(boing_t *boing, boing_pool_t *pool, void *data, uint8_t taken
 			pool->free++;
 		}
 	}
+
+	/* because it is optional, if the container pointer to pointer is not NULL, the container will be set */
+	if(data_container)
+		*data_container = container;
 
 	pool->amount++;
 
@@ -4716,6 +4722,20 @@ int boing_pool_data_release(boing_t *boing, boing_pool_t *pool, void *data)
 		return 1;
 	}
 
+	return boing_pool_data_release_container(boing, pool, container);
+}
+
+int boing_pool_data_release_container(boing_t *boing, boing_pool_t *pool, boing_pool_container_t *container)
+{
+	/* look for the container and if it would make too many free containers,
+	free it from memory */
+
+	if(!container)
+	{
+		boing_error(boing, 0, "container is NULL");
+		return 1;
+	}
+
 	container->taken = 0;
 
 	/* first, remove the container from where it was */
@@ -4775,7 +4795,7 @@ char *boing_str_request(boing_t *boing, size_t size)
 		}
 		memset(ret, 0, sizeof(char) * size);
 
-		if(boing_pool_add(boing, &boing->pool.string, ret, 1, size))
+		if(boing_pool_add(boing, &boing->pool.string, ret, 1, size, NULL))
 		{
 			boing_error(boing, 0, "could not add to pool after string alloc");
 			free(ret);
@@ -4797,7 +4817,7 @@ int boing_str_create_free(boing_t *boing, size_t size)
 	}
 	memset(temp, 0, sizeof(char) * size);
 
-	if(boing_pool_add(boing, &boing->pool.string, temp, 0, size))
+	if(boing_pool_add(boing, &boing->pool.string, temp, 0, size, NULL))
 	{
 		boing_error(boing, 0, "could not add to pool after string alloc");
 		free(temp);
@@ -4993,7 +5013,7 @@ boing_value_t **boing_array_internl_request(boing_t *boing, size_t size)
 		}
 		memset(ret, 0, sizeof(boing_value_t **) * size);
 
-		if(boing_pool_add(boing, &boing->pool.array_internal, ret, 1, size))
+		if(boing_pool_add(boing, &boing->pool.array_internal, ret, 1, size, NULL))
 		{
 			boing_error(boing, 0, "could not add to pool after internal array alloc");
 			free(ret);
@@ -5015,7 +5035,7 @@ int boing_array_internl_create_free(boing_t *boing, size_t size)
 	}
 	memset(temp, 0, sizeof(boing_value_t **) * size);
 
-	if(boing_pool_add(boing, &boing->pool.array_internal, temp, 0, size))
+	if(boing_pool_add(boing, &boing->pool.array_internal, temp, 0, size, NULL))
 	{
 		boing_error(boing, 0, "could not add to pool after internal alloc");
 		free(temp);
@@ -5091,6 +5111,7 @@ static size_t boing_value_pool_size_cb(boing_pool_t *pool, boing_pool_container_
 
 boing_value_t *boing_value_pool_request(boing_t *boing, size_t size)
 {
+	boing_pool_container_t *container = NULL;
 	boing_value_t *ret = NULL;
 
 	if(!(ret = boing_pool_request(boing, &boing->pool.value, size)))
@@ -5103,12 +5124,21 @@ boing_value_t *boing_value_pool_request(boing_t *boing, size_t size)
 		}
 		memset(ret, 0, sizeof(boing_value_t));
 
-		if(boing_pool_add(boing, &boing->pool.value, ret, 1, size))
+		if(boing_pool_add(boing, &boing->pool.value, ret, 1, size, &container))
 		{
 			boing_error(boing, 0, "could not add to pool after value base alloc");
 			free(ret);
 			return NULL;
 		}
+
+		ret->container = container;
+	}
+	else
+	{
+		/* need to preserve the container before memsets */
+		container = ret->container;
+		memset(ret, 0, sizeof(boing_value_t));
+		ret->container = container;
 	}
 
 	return ret;
@@ -5116,7 +5146,10 @@ boing_value_t *boing_value_pool_request(boing_t *boing, size_t size)
 
 int boing_value_pool_create_free(boing_t *boing, size_t size)
 {
-	char *temp = NULL;
+	boing_pool_container_t *container = NULL;
+	boing_value_t *temp = NULL;
+
+
 	/* add a new value base */
 	if(!(temp = malloc(sizeof(boing_value_t))))
 	{
@@ -5125,18 +5158,24 @@ int boing_value_pool_create_free(boing_t *boing, size_t size)
 	}
 	memset(temp, 0, sizeof(boing_value_t));
 
-	if(boing_pool_add(boing, &boing->pool.value, temp, 0, size))
+	if(boing_pool_add(boing, &boing->pool.value, temp, 0, size, &container))
 	{
 		boing_error(boing, 0, "could not add to pool after value base alloc");
 		free(temp);
 		return 1;
 	}
+
+	temp->container = container;
+
 	return 0;
 }
 
 int boing_value_pool_release(boing_t *boing, boing_value_t *ptr)
 {
-	return boing_pool_data_release(boing, &boing->pool.value, ptr);
+	if(!ptr->container)
+		return boing_pool_data_release(boing, &boing->pool.value, ptr);
+
+	return boing_pool_data_release_container(boing, &boing->pool.value, ptr->container);
 }
 
 /* boing value handling and eval */
@@ -5554,7 +5593,6 @@ boing_value_t *boing_value_request(boing_t *boing, uint8_t type, uint32_t alloc_
 	}
 
 	/* NOTE: temporary stuff */
-	memset(ret, 0, sizeof(boing_value_t));
 	ret->references = 1;
 	ret->type = type;
 	ret->allocated = alloc_length;
@@ -5791,6 +5829,7 @@ int boing_value_reference_dec(boing_t *boing, boing_value_t *value)
 
 int boing_value_set(boing_t *boing, boing_value_t *target, boing_value_t *value)
 {
+	boing_pool_container_t *old_container = NULL;
 	boing_value_t **temp_arr = NULL;
 	size_t i, old_ref = 0;
 
@@ -5852,6 +5891,7 @@ int boing_value_set(boing_t *boing, boing_value_t *target, boing_value_t *value)
 	}
 
 	old_ref = target->references;
+	old_container = target->container;
 	/* just memcpy at first */
 	memcpy(target, value, sizeof(boing_value_t));
 
@@ -5890,6 +5930,7 @@ int boing_value_set(boing_t *boing, boing_value_t *target, boing_value_t *value)
 		break;
 	}
 	
+	target->container = old_container; /* preserve the container */
 	target->references = old_ref; /* reset references in case overwritten */
 
 	/* if enabled, refinc the script value */
@@ -5905,6 +5946,7 @@ int boing_value_set(boing_t *boing, boing_value_t *target, boing_value_t *value)
 boing_value_t *boing_value_copy(boing_t *boing, boing_value_t *value)
 {
 	size_t i;
+	boing_pool_container_t *container;
 	boing_value_t *ret = NULL, *temp = NULL;
 
 
@@ -5916,6 +5958,8 @@ boing_value_t *boing_value_copy(boing_t *boing, boing_value_t *value)
 				boing_error(boing, 0, "could not request numeric value for copy");
 				return NULL;
 			}
+
+			container = ret->container;
 
 			memcpy(ret, value, sizeof(boing_value_t));
 		break;
@@ -5931,6 +5975,8 @@ boing_value_t *boing_value_copy(boing_t *boing, boing_value_t *value)
 				boing_error(boing, 0, "could not increment external pointer's references");
 				return NULL;
 			}
+
+			container = ret->container;
 
 			memcpy(ret, value, sizeof(boing_value_t));
 		break;
@@ -5948,6 +5994,7 @@ boing_value_t *boing_value_copy(boing_t *boing, boing_value_t *value)
 				return NULL;
 			}
 
+			container = ret->container;
 
 			memcpy(ret, value, sizeof(boing_value_t));
 
@@ -5964,6 +6011,8 @@ boing_value_t *boing_value_copy(boing_t *boing, boing_value_t *value)
 				boing_error(boing, 0, "could not request array value for copy");
 				return NULL;
 			}
+
+			container = ret->container;
 
 			for(i = 0; i < value->length; ++i)
 			{
@@ -5984,6 +6033,7 @@ boing_value_t *boing_value_copy(boing_t *boing, boing_value_t *value)
 	
 	/* in case overwritten by memcpy */
 	ret->references = 1;
+	ret->container = container;
 
 	/* if enabled, refinc the script value */
 	#if BOING_ENABLE_LINE_NUM
