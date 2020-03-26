@@ -517,7 +517,7 @@ struct boing_t
 
 #define BOING_VERSION_MAJOR 0
 #define BOING_VERSION_MINOR 1
-#define BOING_VERSION_REVISION 0
+#define BOING_VERSION_REVISION 1
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -4954,8 +4954,13 @@ int boing_str_replace(boing_t *boing, char **source, char *replacee, char *repla
 		return 1;
 	}
 
-	replacee_length = strlen(replacee);
-	replacement_length = strlen(replacement);
+	/* because a string with \0 is just "", all "" strings will test for \0 */
+	if(!(replacee_length = strlen(replacee)))
+		replacee_length = 1;
+	
+	if(!(replacement_length = strlen(replacement)))
+		replacee_length = 1;
+
 
 	for(i = 0; i < strlen(*source); ++i)
 	{
@@ -4971,11 +4976,16 @@ int boing_str_replace(boing_t *boing, char **source, char *replacee, char *repla
 					return 1;
 				}
 
-				*source = temp;
-			}
+				(*source)[strlen(*source) + (replacement_length - replacee_length)] = 0x0;
 
-			/* memmove everything past the replacement zone */
-			memmove(&(*source)[i + replacement_length], &(*source)[i + replacee_length], strlen(*source) - (i + replacement_length));
+				*source = temp;
+
+				/* memmove everything past the replacement zone for the replacee */
+				memmove(&(*source)[i + replacement_length], &(*source)[i + replacee_length], strlen(*source) - (i + replacee_length));
+			}
+			else /* memmove everything past the replacement zone for the replacement */
+				memmove(&(*source)[i + replacement_length], &(*source)[i + replacee_length], strlen(*source) - (i + replacement_length));
+			
 
 			/* overwrite the replacee */
 			memmove(&(*source)[i], replacement, replacement_length);
@@ -6654,6 +6664,18 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 	size_t i, j;
 
 
+	#define REFORMAT(replacee, replacement) do	\
+	{	\
+		if(boing_str_replace(boing, &temp, replacee, replacement))	\
+		{	\
+			boing_error(boing, 0, "could not escape string characters");	\
+			boing_str_release(boing, temp);	\
+			return NULL;	\
+		}	\
+	} while(0)
+
+
+
 	for(i = 0; i < 255; ++i)
 	{
 		indentation[i] = '\t';
@@ -7058,6 +7080,21 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 					boing_error(boing, 0, "could not create string literal in readable function");
 					return NULL;
 				}
+				
+				/* escape characters */
+				REFORMAT("\a", "\\a");
+				REFORMAT("\e", "\\e");
+				REFORMAT("'", "\\'");
+				REFORMAT("\"", "\\\"");
+				REFORMAT("\\", "\\\\");
+				REFORMAT("\n", "\\n");
+				REFORMAT("\r", "\\r");
+				REFORMAT("\t", "\\t");
+				REFORMAT("\v", "\\v");
+				REFORMAT("\b", "\\b");
+				REFORMAT("\f", "\\f");
+				REFORMAT("\0", "\\0");
+				
 
 				if(!(ret = boing_str_sprintf(boing, "\"%s\"", temp)))
 				{
