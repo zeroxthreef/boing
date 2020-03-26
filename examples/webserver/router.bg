@@ -147,13 +147,22 @@ wROUTER_HANDLE_FILE
 		wSCRIPT_RET e(m(oLOOK_PATH LOOK_PATH) [i_1] SHARED_SCRIPT_STACK FALSE)
 
 		# check for validity of return data
-		0f(!= zSCRIPT_RET 3)
+		0f(& != zSCRIPT_RET 3  != zSCRIPT_RET 4)
 		{
 			eROUTER_LOG["router" "error" +("script error in " LOOK_PATH)] 
 		}
 		f1
 		{
-			wRET eHTTP_EXPORT[ iSCRIPT_RET0 iSCRIPT_RET1 [["Content-Type" iSCRIPT_RET2]]]
+			# determine if a 4th value was returned
+			0f(< 3 zSCRIPT_RET)
+			{
+				wRET eHTTP_EXPORT[ iSCRIPT_RET0 iSCRIPT_RET1 +( [["Content-Type" iSCRIPT_RET2]]  iSCRIPT_RET3  )]
+			}
+			f1
+			{
+				ps[["Content-Type" iSCRIPT_RET2]]
+				wRET eHTTP_EXPORT[ iSCRIPT_RET0 iSCRIPT_RET1 [["Content-Type" iSCRIPT_RET2]]]
+			}
 		}
 	}
 	f1

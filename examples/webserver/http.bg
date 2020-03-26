@@ -132,11 +132,11 @@ wHTTP_EXPORT
 	# need to detect if returning a string or not. Allows for anything
 	0f(!= yRESPONSE ARRAY)
 	{
-		t(i_2 "Content-Length" y(zRESPONSE ARRAY))
+		t(i_2 "Content-Length" szy(zi_0 ARRAY))
 	}
 	f1
 	{
-		t(i_2 "Content-Length" zRESPONSE)
+		t(i_2 "Content-Length" szi_0)
 	}
 	
 	# add headers. Formatted as [["header" "value"] ...]
