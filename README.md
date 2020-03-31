@@ -1,7 +1,15 @@
 # Boing
+```
+l<I 20{
+	p"hello world" nI
+}
+```
+
 Boing is an esoteric language with an easily embeddable interpreter in C89*. The core is just a single header (boing.h) that can be placed into any file.
 
 The core itself has no dependencies on anything but the C standard library.
+
+There is also working REPL so quick scripts can be tested.
 
 Boing has garbage collection (automatic reference counting), but it's very easy to make a circular reference and there is no circular reference detection yet. This will cause a pool leak if care isn't taken to avoid this.
 
