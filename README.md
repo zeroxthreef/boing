@@ -3,20 +3,22 @@
 l<I 20{
 	p"hello world" nI
 }
+
+l<I20{p"hello world"nI}
 ```
 
 Boing is an esoteric language with an easily embeddable interpreter in C89*. The core is just a single header (boing.h) that can be placed into any file.
 
 The core itself has no dependencies on anything but the C standard library.
 
-There is also working REPL so quick scripts can be tested.
+There is also working REPL so quick scripts can be tested. This can be accomplished by providing no arguments to the binary.
 
 Boing has garbage collection (automatic reference counting), but it's very easy to make a circular reference and there is no circular reference detection yet. This will cause a pool leak if care isn't taken to avoid this.
 
 
-Note: Nothing will cause a true leak (except for pool corrupting errors) because the various pools keep track of currently in use and free things. As long as the pools are cleaned up, there will be no real leaks.
+Note: Nothing will cause a true memory leak (except for pool corrupting errors) because the various pools keep track of currently in use and free things. As long as the pools are cleaned up, there will be no real leaks.
 
-Note#2: Boing has not reached version 1.0 yet. Lots will change before then. Havent finished setting up all of the readmes and documentation yet.
+Note#2: Boing has not reached version 1.0 yet. Lots will change before then. I Haven't finished setting up all of the readmes and documentation yet.
 
 
 \* _It is mostly C89, but the few C99 features it does use (like stdint.h and vsnprintf) are easily changed with a few #defines like BOING_VSNPRINTF and defining uint8_t, uint32_t as something else._
