@@ -517,7 +517,7 @@ struct boing_t
 
 #define BOING_VERSION_MAJOR 0
 #define BOING_VERSION_MINOR 1
-#define BOING_VERSION_REVISION 1
+#define BOING_VERSION_REVISION 2
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -4943,7 +4943,7 @@ char *boing_str_ndup(boing_t *boing, char *str, size_t length)
 
 int boing_str_replace(boing_t *boing, char **source, char *replacee, char *replacement)
 {
-	size_t i, replacement_length = 0, replacee_length = 0;
+	size_t i, replacement_length = 0, replacee_length = 0, new_length = 0;
 	char *temp = NULL;
 
 
@@ -4959,7 +4959,7 @@ int boing_str_replace(boing_t *boing, char **source, char *replacee, char *repla
 		replacee_length = 1;
 	
 	if(!(replacement_length = strlen(replacement)))
-		replacee_length = 1;
+		replacement_length = 1;
 
 
 	for(i = 0; i < strlen(*source); ++i)
@@ -4970,22 +4970,21 @@ int boing_str_replace(boing_t *boing, char **source, char *replacee, char *repla
 			/* if its smaller, just replace, if its larger resize */
 			if(replacement_length > replacee_length)
 			{
-				if(!(temp = boing_str_resize(boing, *source, strlen(*source) + (replacement_length - replacee_length) + 1)))
+				new_length = strlen(*source) + (replacement_length - replacee_length);
+
+				if(!(temp = boing_str_resize(boing, *source, new_length + 1)))
 				{
 					boing_error(boing, 0, "could not resize string in str_replace");
 					return 1;
 				}
 
-				(*source)[strlen(*source) + (replacement_length - replacee_length)] = 0x0;
+				temp[new_length] = 0x0;
 
 				*source = temp;
-
-				/* memmove everything past the replacement zone for the replacee */
-				memmove(&(*source)[i + replacement_length], &(*source)[i + replacee_length], strlen(*source) - (i + replacee_length));
 			}
-			else /* memmove everything past the replacement zone for the replacement */
-				memmove(&(*source)[i + replacement_length], &(*source)[i + replacee_length], strlen(*source) - (i + replacement_length));
-			
+
+			/* memmove everything past the replacement zone */
+			memmove(&(*source)[i + replacement_length], &(*source)[i + replacee_length], strlen(*source) - (abs(replacement_length - replacee_length) + i));
 
 			/* overwrite the replacee */
 			memmove(&(*source)[i], replacement, replacement_length);
@@ -6660,19 +6659,24 @@ char *boing_str_from_value_array(boing_t *boing, boing_value_t *value)
 /* TODO: repeat less code */
 char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_t *previous_type, uint8_t style, uint32_t level)
 {
-	char *ret = NULL, *temp = NULL, *fmt = NULL, indentation[256] = {0}, indentation_inside[256] = {0}; /* set a maximum indentation but remember to check it */
+	char *ret = NULL, *temp = NULL, *resize = NULL, *fmt = NULL, indentation[256] = {0}, indentation_inside[256] = {0}; /* set a maximum indentation but remember to check it */
 	size_t i, j;
 
 
-	#define REFORMAT(replacee, replacement) do	\
-	{	\
-		if(boing_str_replace(boing, &temp, replacee, replacement))	\
-		{	\
-			boing_error(boing, 0, "could not escape string characters");	\
-			boing_str_release(boing, temp);	\
-			return NULL;	\
-		}	\
-	} while(0)
+	#define REFORMAT(replacee, replacement)	\
+		case replacee:	\
+			if(!(resize = boing_str_resize(boing, temp, strlen(temp) + 2)))	\
+			{	\
+				boing_error(boing, 0, "could not resize string for string format");	\
+				return NULL;	\
+			}	\
+			temp = resize;	\
+			memmove(&temp[j + 1], &temp[j], strlen(temp) - j + 1);	\
+			/* write the literal */	\
+			temp[j] = '\\';	\
+			temp[j + 1] = replacement;	\
+			++j;	\
+		break
 
 
 
@@ -7082,18 +7086,25 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 				}
 				
 				/* escape characters */
-				REFORMAT("\a", "\\a");
-				REFORMAT("\e", "\\e");
-				REFORMAT("'", "\\'");
-				REFORMAT("\"", "\\\"");
-				REFORMAT("\\", "\\\\");
-				REFORMAT("\n", "\\n");
-				REFORMAT("\r", "\\r");
-				REFORMAT("\t", "\\t");
-				REFORMAT("\v", "\\v");
-				REFORMAT("\b", "\\b");
-				REFORMAT("\f", "\\f");
-				REFORMAT("\0", "\\0");
+				/* TODO, need to somehow determine the actual string but stop at repeating 0's. Getting the container size wont work */
+				for(j = 0; j < strlen(temp); ++j)
+				{
+					switch(temp[j])
+					{
+						REFORMAT('\a', 'a');
+						REFORMAT('\e', 'e');
+						REFORMAT('\'', '\'');
+						REFORMAT('\"', '\"');
+						REFORMAT('\\', '\\');
+						REFORMAT('\n', 'n');
+						REFORMAT('\r', 'r');
+						REFORMAT('\t', 't');
+						REFORMAT('\v', 'v');
+						REFORMAT('\b', 'b');
+						REFORMAT('\f', 'f');
+						REFORMAT('\0', '0');
+					}
+				}
 				
 
 				if(!(ret = boing_str_sprintf(boing, "\"%s\"", temp)))
