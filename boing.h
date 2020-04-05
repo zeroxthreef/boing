@@ -149,9 +149,15 @@ t(2e)- searches a table (associative array) for the first instance of the value 
 	 - associative array format (will return '0' if not found (get only) or improper array)
 	 - also, _anything_ can be used as the cmp value or a key. It is recursively compared.
 	 -
+	 - NOTE: to delete a row, set the value to 0. Because tables return 0 by default if
+	 - no row exists, if a script sets a row to 0 without the intention of deleting,
+	 - it will appear to still function.
+	 -
+	 - internal format:
 	 - [[key_value data_value]...]
 	 -
 	 - examples:
+	 -
 	 -
 	 - t[["test""hey"]]"test"
 	 - returns: "hey"
@@ -517,7 +523,7 @@ struct boing_t
 
 #define BOING_VERSION_MAJOR 0
 #define BOING_VERSION_MINOR 1
-#define BOING_VERSION_REVISION 2
+#define BOING_VERSION_REVISION 3
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -2965,18 +2971,33 @@ boing_value_t *boing_operation_table(boing_t *boing, boing_value_t *program, boi
 
 		boing_value_reference_inc(boing, ret);
 	}
-	else if(args->length == 3)
+	else if(args->length == 3) /* modify table */
 	{
 		/* check if it already exists to return 1 or 0 */
 		if(boing_value_table_get(boing, args->array[0], args->array[1]))
 			exists = 1.0;
 
-		if(boing_value_table_add_set(boing, args->array[0], args->array[1], args->array[2], 1))
+		/* if not 0, create or modify row */
+		if(!(args->array[2]->type == BOING_TYPE_VALUE_NUMBER && !args->array[2]->number))
 		{
-			boing_error(boing, 0, "could not set/add row in table operation 't'");
-			/* TODO throw error */
-			return NULL;
+			if(boing_value_table_add_set(boing, args->array[0], args->array[1], args->array[2], 1))
+			{
+				boing_error(boing, 0, "could not set/add row in table operation 't'");
+				/* TODO throw error */
+				return NULL;
+			}
 		}
+		else if(exists) /* delete row */
+		{
+			if(boing_value_table_remove(boing, args->array[0], args->array[1]))
+			{
+				boing_error(boing, 0, "could not remove row in table operation 't'");
+				/* TODO throw error */
+				return NULL;
+			}
+		}
+		/* do nothing if setting a new row to 0 */
+
 
 		if(!(ret = boing_value_from_double(boing, exists)))
 		{

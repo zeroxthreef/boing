@@ -700,6 +700,22 @@ Now, it prints 4 3 2 1 0
 | (array, any) | First, the array **must**, if not empty, have rows of exatly 2 elements wide. The row with an element at position 0 will act as the key, and if arg1 matches, the value will be returned. If not found, numeric 0 will be returned |
 | (array, any, any) | Same as before with table array rows, but if the key exists, the existing one will be set to the value of arg2. If one does not exist, a new row will be created with the value of arg2 |
 
+NOTE: rows are deleted from tables by setting the value to numeric 0. This is fine for setting it to 0 regardless because tables return 0 for not found rows which is the same as it being set to 0. Its generally best to think of tables as an infinite table of every kind of key possible set to 0.
+
+If this is undesirable, wrap values in arrays like:
+```
+wTABLE []
+
+t(TABLE "key" ["value"])
+
+# this way, its easy to set it to 0 and still "exist"
+t(TABLE "key" [0])
+
+
+# just index by 0 to get the real value
+p("value: " i(tTABLE"key"  0))
+```
+
 
 ### sizeof
 | Character | Explicit Arguments Allowed | Implicit Argument Count |
