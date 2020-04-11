@@ -160,7 +160,6 @@ wROUTER_HANDLE_FILE
 			}
 			f1
 			{
-				ps[["Content-Type" iSCRIPT_RET2]]
 				wRET eHTTP_EXPORT[ iSCRIPT_RET0 iSCRIPT_RET1 [["Content-Type" iSCRIPT_RET2]]]
 			}
 		}
