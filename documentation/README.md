@@ -1065,3 +1065,4 @@ p("value: " i(tTABLE"key"  0))
 | `ABS` | (external)C function that returns | Expects a numeric argument |
 | `FLOOR` | (external)C function that returns | Expects a numeric argument |
 | `ATANTWO` | (external)C function that returns | Expects two numeric arguments |
+| `RELATIVE` | (external)C function that returns | Expects a single array argument (NOTE: will only work as expected if the array came from the parser (string literal). If it was created at runtime, the interpreter working directory will be used instead) |
