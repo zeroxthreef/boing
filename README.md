@@ -281,7 +281,6 @@ This project is licensed under the Unlicense (a more verbose public domain).
 Note that if you build and link with any module that links with another library, the libraries linked with that module have their own individual licenses that will apply.
 
 ## TODO
-* reduce the recursion in boing_value_reference_dec() because it entirely halts when opening a 100kb+ file and then destroying its array
 * change the boing_error() function to a loglevel version
 * maybe add error catching and throwing. Will require a lot more work on making sure things are cleaned up when error conditions are met
 * more operations to utilize the rest of non-upper case + !'_' ascii
