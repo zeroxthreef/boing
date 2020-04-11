@@ -1,0 +1,6 @@
+wMESSAGE "hello"
+
+wFUNCTION
+{
+	p"hello"
+}

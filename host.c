@@ -25,6 +25,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+	#define __WINDOWS__
+#endif
+
 
 #ifndef HOST_MODULE_LOCATION
 	#define HOST_MODULE_LOCATION ""
@@ -42,6 +46,9 @@ For more information, please refer to <http://unlicense.org/>
 #define BOING_DEFAULT_FREE_VALUE_BASE 0
 #define BOING_HASH_64
 #define BOING_IMPLEMENTATION
+#ifdef __WINDOWS__
+	#define BOING_PATH_SEPARATE '\\'
+#endif
 #include "boing.h"
 
 /* module headers */
@@ -53,7 +60,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#ifdef __WINDOWS__
 	#include <Windows.h>
 #elif __APPLE__
 	#include <dlfcn.h>

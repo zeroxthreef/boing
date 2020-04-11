@@ -560,6 +560,7 @@ boing_value_t *boing_std_ceil(boing_t *boing, boing_value_t *program, boing_valu
 boing_value_t *boing_std_fabs(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args);
 boing_value_t *boing_std_floor(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args);
 boing_value_t *boing_std_atan2(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args);
+boing_value_t *boing_std_relative(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args);
 boing_value_t *boing_std_pool_string_get_block_alloc(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args);
 boing_value_t *boing_std_pool_string_set_block_alloc(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args);
 boing_value_t *boing_std_pool_string_get_amount(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args);
@@ -772,6 +773,10 @@ int boing_destroy(boing_t *boing, int error_print_limit);
 
 #ifndef BOING_VSNPRINTF
 	#define BOING_VSNPRINTF vsnprintf
+#endif
+
+#ifndef BOING_PATH_SEPARATE
+	#define BOING_PATH_SEPARATE '/'
 #endif
 
 /* ========================= standard operations ========================= */
@@ -4174,6 +4179,8 @@ int boing_root_stack_init(boing_t *boing, boing_value_t *stack)
 	BOING_ADD_GLOBAL("FLOOR", boing_value_from_ptr(boing, &boing_std_floor, BOING_EXTERNAL_FUNCTION, NULL));
 	BOING_ADD_GLOBAL("ATANTWO", boing_value_from_ptr(boing, &boing_std_atan2, BOING_EXTERNAL_FUNCTION, NULL));
 
+	/* misc */
+	BOING_ADD_GLOBAL("RELATIVE", boing_value_from_ptr(boing, &boing_std_relative, BOING_EXTERNAL_FUNCTION, NULL));
 
 	return boing->callback.boing_root_stack_init_cb(boing, stack);
 }
@@ -4371,6 +4378,118 @@ boing_value_t *boing_std_atan2(boing_t *boing, boing_value_t *program, boing_val
 		/* TODO throw error */
 		return NULL;
 	}
+
+	return ret;
+}
+
+boing_value_t *boing_std_relative(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args)
+{
+	boing_value_t *ret = NULL;
+	boing_script_t *script = NULL;
+	char *begin = NULL, *end = NULL, *new_path = NULL, *offset = NULL;
+
+
+	if(args->length != 1 && args->array[0]->type != BOING_TYPE_VALUE_ARRAY)
+	{
+		boing_error(boing, 0, "the RELATIVE function expects a single array (string)");
+		/* TODO throw error */
+		return NULL;
+	}
+
+	/* if line numbers are enabled, return the string path with the new path appended */
+	#ifdef BOING_ENABLE_LINE_NUM
+		/* only create string if the script exists */
+
+		if(args->array[0]->script)
+		{
+			script = ((boing_script_t *)args->array[0]->script->external.ptr);
+
+			begin = script->name;
+
+
+			if(!(end = boing_str_from_value_array(boing, args->array[0])))
+			{
+				boing_error(boing, 0, "could not create end string");
+				/* TODO throw error */
+				return NULL;
+			}
+
+			/* make new path */
+
+			if((offset = strrchr(begin, BOING_PATH_SEPARATE)))
+			{
+				/* need to get the pwd instead */
+				if(!(new_path = boing_str_sprintf(boing, "%.*s%c%s", (int)(offset - begin), begin, BOING_PATH_SEPARATE, end)))
+				{
+					boing_error(boing, 0, "could not create new path string");
+					boing_str_release(boing, end);
+					/* TODO throw error */
+					return NULL;
+				}
+			}
+			else
+			{
+				/* just duplicate */
+				if(!(new_path = boing_str_ndup(boing, end, strlen(end))))
+				{
+					boing_error(boing, 0, "could not create new path string");
+					boing_str_release(boing, end);
+					/* TODO throw error */
+					return NULL;
+				}
+			}
+			
+
+			/* release parts */
+
+			if(boing_str_release(boing, end))
+			{
+				boing_error(boing, 0, "could not release end string");
+				boing_str_release(boing, new_path);
+				/* TODO throw error */
+				return NULL;
+			}
+
+			/* create return and clean up final string */
+
+			if(!(ret = boing_value_from_str(boing, new_path)))
+			{
+				boing_error(boing, 0, "could not create return value for RELATIVE function");
+				/* TODO throw error */
+				return NULL;
+			}
+
+			
+			if(boing_str_release(boing, new_path))
+			{
+				boing_error(boing, 0, "could not release end string");
+				boing_value_reference_dec(boing, ret);
+				/* TODO throw error */
+				return NULL;
+			}
+		}
+		else
+		{
+			if(!(ret = args->array[0]))
+			{
+				boing_error(boing, 0, "could not create return value for RELATIVE function");
+				/* TODO throw error */
+				return NULL;
+			}
+
+			boing_value_reference_inc(boing, ret);
+		}
+		
+	#else
+		if(!(ret = args->array[0]))
+		{
+			boing_error(boing, 0, "could not create return value for RELATIVE function");
+			/* TODO throw error */
+			return NULL;
+		}
+
+		boing_value_reference_inc(boing, ret);
+	#endif
 
 	return ret;
 }
