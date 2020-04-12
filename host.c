@@ -36,14 +36,20 @@ For more information, please refer to <http://unlicense.org/>
 
 #define ERROR_PRINT_LIMIT_DEFAULT 10
 
-#define HOST_FREE_STRING 20
-#define HOST_FREE_ARRAY 50
-#define HOST_FREE_VALUE 80
+#ifdef __EMSCRIPTEN__
+	#define BOING_DEFAULT_FREE_STRING 20
+	#define BOING_DEFAULT_FREE_VALUE_ARRAY_INTERNAL 20
+	#define BOING_DEFAULT_FREE_VALUE_BASE 80
+#else
+	#define HOST_FREE_STRING 20
+	#define HOST_FREE_ARRAY 50
+	#define HOST_FREE_VALUE 80
 
-/* initialize the default free amount to 0 in the host because it can change with arguments */
-#define BOING_DEFAULT_FREE_STRING 0
-#define BOING_DEFAULT_FREE_VALUE_ARRAY_INTERNAL 0
-#define BOING_DEFAULT_FREE_VALUE_BASE 0
+	/* initialize the default free amount to 0 in the host because it can change with arguments */
+	#define BOING_DEFAULT_FREE_STRING 0
+	#define BOING_DEFAULT_FREE_VALUE_ARRAY_INTERNAL 0
+	#define BOING_DEFAULT_FREE_VALUE_BASE 0
+#endif
 #define BOING_HASH_64
 #define BOING_IMPLEMENTATION
 #ifdef __WINDOWS__
@@ -742,6 +748,7 @@ int main(int argc, char **argv)
 
 /* emscripten controls */
 #ifdef __EMSCRIPTEN__
+extern "C" {
 boing_t *EMSCRIPTEN_KEEPALIVE init_host()
 {
 	boing_t *boing = NULL;
@@ -798,6 +805,8 @@ void EMSCRIPTEN_KEEPALIVE script_run(boing_t *boing, char *script)
 		boing_error(boing, 0, "could not refdec return value");
 	}
 }
+
+} /* extern c */
 #endif
 
 /* argument functions */
