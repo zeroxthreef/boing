@@ -6,6 +6,7 @@ l<I 20{
 
 l<I20{p"hello world"nI}
 ```
+[Try it online](https://zeroxthreef.github.io/boing/)
 
 Boing is an esoteric language with an easily embeddable interpreter in C89*. The core is just a single header (boing.h) that can be placed into any file.
 
