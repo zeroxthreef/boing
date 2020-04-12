@@ -37,6 +37,11 @@ For more information, please refer to <http://unlicense.org/>
 #define ERROR_PRINT_LIMIT_DEFAULT 10
 
 #ifdef __EMSCRIPTEN__
+	/* need the host defines because of arguments */
+	#define HOST_FREE_STRING 20
+	#define HOST_FREE_ARRAY 50
+	#define HOST_FREE_VALUE 80
+
 	#define BOING_DEFAULT_FREE_STRING 20
 	#define BOING_DEFAULT_FREE_VALUE_ARRAY_INTERNAL 20
 	#define BOING_DEFAULT_FREE_VALUE_BASE 80
