@@ -68,6 +68,14 @@
 			<br>
 			<button id="run_button"">run</button>
 			<button onclick="getElementById('script').value = window.location.href + '?s=' + encodeURIComponent(getElementById('script').value)">convert to sharable url</button>
+			<select id="script_template" onchange="update_selected()">
+				<option value="0">select demo</option>
+				<option value="1">hello loop</option>
+				<option value="2">eval and stack</option>
+				<option value="3">tables</option>
+				<option value="4">mandelbrot</option>
+				<option value="5">mouse draw</option>
+			</select>
 			<br><br>
 			<b>console:</b>
 			<textarea id="console_output" readonly></textarea>
@@ -82,6 +90,7 @@
 
 		<script type="text/javascript">
 			var boing = null;
+			var templates = [];
 			var script_run = null;
 
 			var urlp = new URLSearchParams(window.location.search);
@@ -91,6 +100,17 @@
 				console.log("setting script textarea to s query parameter");
 				var script = document.getElementById("script");
 				script.value = new_script;
+			}
+
+			function update_selected()
+			{
+				var select = document.getElementById("script_template");
+
+				if(select.selectedIndex != 0)
+				{
+					document.getElementById("script").value = templates[Number(select.options[select.selectedIndex].value) -1];
+				}
+				console.log("selected " + select.options[select.selectedIndex].value);
 			}
 
 			var Module = {
@@ -161,5 +181,155 @@
 			console.log("loading...");
 		</script>
 		<script async type="text/javascript" src="boing.js"></script>
+		<script type="text/javascript">
+			// just a bunch of literals for templates
+			var templates = [
+				`l<I 20{
+	p"hello world" nI
+}`,
+				`# test preserving a new scope stack
+
+wVAR "test"
+
+wSCRIPT
+{
+	p("the variable is " VAR) # first time, should print 0, after should print hello
+
+	wVAR "hello"
+}
+
+wSTACK k-1
+e(SCRIPT [] STACK FALSE) # print 0
+e(SCRIPT [] STACK FALSE) # print hello
+
+pVAR # print test`,
+				`wTABLE[
+	["hello" 3]
+	["hello1" 5]
+	["hello2" 66]
+	["hello3" 89]
+]
+
+ptTABLE"hello5"
+
+t(TABLE "hello5" "value")
+
+ptTABLE"hello5"
+
+wTABLE_T[]
+t(TABLE_T "row1" "test")
+t(TABLE_T "row2" "test1")
+t(TABLE_T "row3" "test2")
+t(TABLE_T "row4" "test3")
+t(TABLE_T "row5" "test4")`,
+`#!../boing
+wWIDTH 80
+wHEIGHT 24
+wMAXITERS 70
+wSCALEFACTOR '0.04'
+wXOFFSET '0.0'
+wYOFFSET '0.0F'
+wBENCHMARK 1
+
+wPIXTYPES[" " "." "^" "~" "+" "*" "C" "O" "=" "$" "%" "#" "@"]
+
+wXITER 0
+wYITER 0
+wITER 0
+
+wX 0
+wY 0
+wXX 0
+wYY 0
+wTX 0
+
+
+wCALCPIX
+{
+	/(*(iARGS 0  12) MAXITERS)
+}
+
+
+p"mandelbrot:"
+
+l(<YITER HEIGHT)
+{
+	wLINE "" #the line to print
+	wXITER 0
+	l(<XITER WIDTH)
+	{
+		wXX +(*(-(XITER /(WIDTH 2)) SCALEFACTOR) XOFFSET)
+		wYY +(*(-(YITER /(HEIGHT 2)) *(SCALEFACTOR 2)) XOFFSET)
+
+		#l(<(&(<(+(*(X X) *(Y Y)) 4) ITER) +(MAXITERS 1)))
+		l(&( <(  +( *(X X) *(Y Y) )   4)  <(ITER MAXITERS)))
+		{
+			wTX +(-(*(X X) *(Y Y)) XX)
+			wY +(*(2 X Y) YY)
+			wX TX
+
+			#wITER +(ITER 1)
+			nITER
+		}
+
+		wLINE +(LINE i(PIXTYPES eCALCPIX[ITER]))
+
+		wITER 0
+		wX 0
+		wY 0
+
+
+		#wXITER+(XITER 1) # no inc op yet
+		nXITER
+	}
+
+	pLINE
+
+	#wYITER+(YITER 1) # no inc op yet
+	nYITER
+}`,
+				`m"boing_screen.so"
+
+# TODO: update the loop to use emscripten callbacks instead
+wWINDOW xSCREEN_CREATE_WINDOW["boing" 640 480 TRUE]
+wQUIT 0
+
+wMOUSE_STATUS 0
+
+l!QUIT
+{
+	wEVENT 0
+
+	l(xSCREEN_POLL_EVENT[EVENT])
+	{
+
+		0f(= tEVENT"type"  SCREEN_QUIT)
+		{
+			nQUIT
+		}
+		f(= tEVENT"type" SCREEN_MOUSEBUTTONDOWN)
+		{
+			wMOUSE_STATUS 1
+		}
+		f(= tEVENT"type" SCREEN_MOUSEBUTTONUP)
+		{
+			wMOUSE_STATUS 0
+		}
+		f(= tEVENT"type" SCREEN_MOUSEMOTION)
+		{
+			0fMOUSE_STATUS
+			{
+				xSCREEN_DRAW_COLOR[WINDOW tEVENT"x" tEVENT"y" tEVENT"x" tEVENT"y"]
+				xSCREEN_DRAW_PIXEL[WINDOW tEVENT"x" tEVENT"y"]
+			}
+		}
+	}
+
+	xSCREEN_WINDOW_PRESENT[WINDOW]
+
+	xSCREEN_DELAY[16]
+}`,
+			];
+		</script>
 	</body>
 </html>
