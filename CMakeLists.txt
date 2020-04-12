@@ -22,8 +22,9 @@ add_definitions("-DHOST_MODULE_LOCATION=\"${CMAKE_INSTALL_PREFIX}/lib/boing_modu
 
 if(EMSCRIPTEN)
 	add_executable(boing.html ${SOURCES})
+	target_link_libraries(boing.html ${LIBRARIES})
 else()
 	add_executable(boing ${SOURCES})
+	target_link_libraries(boing ${LIBRARIES})
+	install(TARGETS boing DESTINATION bin)
 endif()
-target_link_libraries(boing ${LIBRARIES})
-install(TARGETS boing DESTINATION bin)
