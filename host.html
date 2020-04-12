@@ -80,6 +80,9 @@
 		</div>
 
 		<script type="text/javascript">
+			var boing = null;
+			var script_run = null;
+			
 			var Module = {
 				preRun: [],
 				postRun: [],
@@ -113,27 +116,30 @@
 
 					return canvas;
 				})(),
-				setStatus: function(text) {
+				setStatus: (function(text) {
 
-				}
+				})(),
+				onRuntimeInitialized: (function() {
+					console.log("initialized");
+
+					boing = Module.ccall("init_host", "number", null);
+					console.log("boing return value: " + boing);
+
+					script_run = Module.cwrap("script_run", null, ["number", "string"]);
+					console.log("script_run: " + script_run);
+
+
+					document.getElementById("run_button").onclick = function(){
+							var script_text = document.getElementById("script").value;
+
+							script_run(boing, script_text);
+						};
+				})()
 			};
 
 			var script = document.createElement("script");
 			script.src = "boing.js";
 			document.body.appendChild(script);
-
-			var boing = Module.ccall("init_host", "number", null);
-			console.log("boing return value: " + boing);
-
-			var script_run = Module.cwrap("script_run", null, ["number", "string"]);
-			console.log("script_run: " + script_run);
-
-
-			document.getElementById("run_button").onclick = function(){
-					var script_text = document.getElementById("script").value;
-
-					script_run(boing, script_text);
-				};
 		</script>
 	</body>
 </html>

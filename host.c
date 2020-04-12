@@ -613,6 +613,7 @@ static uint8_t *host_import(boing_t *boing, boing_value_t *stack, char *path)
 	return ret;
 }
 
+#ifndef __EMSCRIPTEN__
 int main(int argc, char **argv)
 {
 	int retint = 1, arg_offset = 0;
@@ -750,10 +751,11 @@ int main(int argc, char **argv)
 
 	return retint;
 }
+#endif
 
 /* emscripten controls */
 #ifdef __EMSCRIPTEN__
-boing_t *EMSCRIPTEN_KEEPALIVE init_host()
+EMSCRIPTEN_KEEPALIVE boing_t *init_host()
 {
 	boing_t *boing = NULL;
 
@@ -784,7 +786,7 @@ boing_t *EMSCRIPTEN_KEEPALIVE init_host()
 	return boing;
 }
 
-void EMSCRIPTEN_KEEPALIVE destroy_host(boing_t *boing)
+EMSCRIPTEN_KEEPALIVE void destroy_host(boing_t *boing)
 {
 	if(boing_destroy(boing, 100))
 	{
@@ -794,7 +796,7 @@ void EMSCRIPTEN_KEEPALIVE destroy_host(boing_t *boing)
 	free(boing);
 }
 
-void EMSCRIPTEN_KEEPALIVE script_run(boing_t *boing, char *script)
+EMSCRIPTEN_KEEPALIVE void script_run(boing_t *boing, char *script)
 {
 	boing_value_t *ret = NULL;
 
