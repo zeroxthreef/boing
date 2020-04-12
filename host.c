@@ -62,7 +62,10 @@ For more information, please refer to <http://unlicense.org/>
 
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
-#elif __WINDOWS__
+#endif
+
+
+#ifdef __WINDOWS__
 	#include <Windows.h>
 #elif __APPLE__
 	#include <dlfcn.h>
@@ -750,9 +753,9 @@ boing_t *EMSCRIPTEN_KEEPALIVE init_host()
 		return NULL;
 	}
 
-	b.callback.boing_root_stack_init_cb = &host_root_stack_init;
-	b.callback.boing_module_cleanup_cb = &host_module_cleanup;
-	b.callback.boing_import_cb = &host_import;
+	boing->callback.boing_root_stack_init_cb = &host_root_stack_init;
+	boing->callback.boing_module_cleanup_cb = &host_module_cleanup;
+	boing->callback.boing_import_cb = &host_import;
 
 	if(boing_init(boing))
 	{
