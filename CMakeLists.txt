@@ -20,6 +20,10 @@ add_subdirectory(modules)
 
 add_definitions("-DHOST_MODULE_LOCATION=\"${CMAKE_INSTALL_PREFIX}/lib/boing_modules\"")
 
-add_executable(boing ${SOURCES})
+if(EMSCRIPTEN)
+	add_executable(boing.html ${SOURCES})
+else()
+	add_executable(boing ${SOURCES})
+endif()
 target_link_libraries(boing ${LIBRARIES})
 install(TARGETS boing DESTINATION bin)

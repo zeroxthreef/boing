@@ -1,20 +1,28 @@
 project(boing_screen)
 
 
-
-find_library(LIBSDL2 SDL2)
-if(NOT LIBSDL2)
-	message(FATAL_ERROR "libSDL2 not installed")
+if(NOT EMSCRIPTEN)
+	find_library(LIBSDL2 SDL2)
+	if(NOT LIBSDL2)
+		message(FATAL_ERROR "libSDL2 not installed")
+	endif()
 endif()
 
-find_library(LIBSDL2_TTF SDL2_ttf)
-if(NOT LIBSDL2_TTF)
-	message(FATAL_ERROR "libSDL2_ttf not installed")
+if(NOT EMSCRIPTEN)
+	find_library(LIBSDL2_TTF SDL2_ttf)
+	if(NOT LIBSDL2_TTF)
+		message(FATAL_ERROR "libSDL2_ttf not installed")
+	endif()
 endif()
 
 set(MODULE_SCREEN_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/screen.c)
 
-set(MODULE_SCREEN_LIBRARIES SDL2 SDL2_ttf)
+
+if(EMSCRIPTEN)
+	set(MODULE_SCREEN_LIBRARIES SDL2 SDL2_ttf)
+else()
+	set(MODULE_SCREEN_LIBRARIES "-s USE_SDL=2" "-s USE_SDL_TTF=2")
+endif()
 
 
 if(LINK_MODULE_SCREEN)
