@@ -306,7 +306,7 @@ int host_root_stack_init(boing_t *boing, boing_value_t *stack)
 			\
 		if(!(module_value = boing_value_table_get(boing, boing->modules, key)))	\
 		{	\
-			boing_error(boing, 0, "could not find os module");	\
+			boing_error(boing, 0, "could not find module " #name);	\
 			boing_value_reference_dec(boing, key);	\
 			return 1;	\
 		}	\
@@ -783,6 +783,12 @@ EMSCRIPTEN_KEEPALIVE boing_t *init_host()
 		return NULL;
 	}
 
+	if(host_init_modules(boing))
+	{
+		boing_error(boing, 0, "could not initialize default modules");
+		return NULL;
+	}
+
 	return boing;
 }
 
@@ -800,13 +806,12 @@ EMSCRIPTEN_KEEPALIVE void script_run(boing_t *boing, char *script)
 {
 	boing_value_t *ret = NULL;
 
-
 	if(!(ret = boing_eval(boing, script, NULL, "script")))
 	{
 		boing_error(boing, 0, "eval error");
 	}
 
-	if(boing_value_reference_dec(boing, ret))
+	if(ret && boing_value_reference_dec(boing, ret))
 	{
 		boing_error(boing, 0, "could not refdec return value");
 	}

@@ -67,9 +67,10 @@
 }</textarea>
 			<br>
 			<button id="run_button"">run</button>
+			<button onclick="getElementById('script').value = window.location.href + '?s=' + encodeURIComponent(getElementById('script').value)">convert to sharable url</button>
 			<br><br>
 			<b>console:</b>
-			<textarea id="console_output"></textarea>
+			<textarea id="console_output" readonly></textarea>
 			<textarea rows="1" id="console_input" placeholder="type here"></textarea>
 			<button>enter</button>
 		</div>
@@ -82,7 +83,16 @@
 		<script type="text/javascript">
 			var boing = null;
 			var script_run = null;
-			
+
+			var urlp = new URLSearchParams(window.location.search);
+			var new_script = urlp.get("s");
+			if(new_script)
+			{
+				console.log("setting script textarea to s query parameter");
+				var script = document.getElementById("script");
+				script.value = new_script;
+			}
+
 			var Module = {
 				preRun: [],
 				postRun: [],
@@ -101,13 +111,20 @@
 						if(console_output)
 						{
 							console_output.value += text + "\n";
-							element.scrollTop = element.scrollHeight;
+							console_output.scrollTop = console_output.scrollHeight;
 						}
 					};
 				})(),
 				printErr: function(text) {
-					text = Array.prototype.slice.call(arguments).join(" ");
+					var console_output = document.getElementById("console_output");
+					
 					console.error(text);
+
+					if(console_output)
+					{
+						console_output.value += "ERROR: " + text + "\n";
+						console_output.scrollTop = console_output.scrollHeight;
+					}
 				},
 				canvas: (function() {
 					var canvas = document.getElementById("screen");
@@ -119,7 +136,7 @@
 				setStatus: (function(text) {
 
 				})(),
-				onRuntimeInitialized: (function() {
+				onRuntimeInitialized: function() {
 					console.log("initialized");
 
 					boing = Module.ccall("init_host", "number", null);
@@ -131,15 +148,18 @@
 
 					document.getElementById("run_button").onclick = function(){
 							var script_text = document.getElementById("script").value;
+							var console_output = document.getElementById("console_output");
 
+							console_output.value = "";
+
+							console.log("running script: '" + script_text + "'");
 							script_run(boing, script_text);
 						};
-				})()
+				}
 			};
 
-			var script = document.createElement("script");
-			script.src = "boing.js";
-			document.body.appendChild(script);
+			console.log("loading...");
 		</script>
+		<script async type="text/javascript" src="boing.js"></script>
 	</body>
 </html>
