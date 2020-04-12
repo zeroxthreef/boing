@@ -1206,6 +1206,8 @@ int module_os_stack_add(boing_t *boing, boing_value_t *stack, boing_module_t *mo
 		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "linux"));
 	#elif unix
 		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "unix"));
+	#elif #ifdef __EMSCRIPTEN__
+		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "emscripten"));
 	#else
 		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "unknown"));
 	#endif

@@ -60,7 +60,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef __WINDOWS__
+#ifdef __EMSCRIPTEN__
+	#include <emscripten.h>
+#elif __WINDOWS__
 	#include <Windows.h>
 #elif __APPLE__
 	#include <dlfcn.h>
@@ -734,6 +736,66 @@ int main(int argc, char **argv)
 
 	return retint;
 }
+
+/* emscripten controls */
+#ifdef __EMSCRIPTEN__
+boing_t *EMSCRIPTEN_KEEPALIVE init_host()
+{
+	boing_t *boing = NULL;
+
+	/* initialize the boing struct */
+	if(!(boing = calloc(1, sizeof(boing_t))))
+	{
+		boing_error(boing, 0, "unable to calloc boing struct");
+		return NULL;
+	}
+
+	b.callback.boing_root_stack_init_cb = &host_root_stack_init;
+	b.callback.boing_module_cleanup_cb = &host_module_cleanup;
+	b.callback.boing_import_cb = &host_import;
+
+	if(boing_init(boing))
+	{
+		boing_error(boing, 0, "unable to intialize boing");
+
+		if(boing_destroy(boing, 100))
+		{
+			boing_error(boing, 0, "could not clean up boing after an init error");
+			return NULL;
+		}
+
+		return NULL;
+	}
+
+	return boing;
+}
+
+void EMSCRIPTEN_KEEPALIVE destroy_host(boing_t *boing)
+{
+	if(boing_destroy(boing, 100))
+	{
+		boing_error(boing, 0, "could not clean up after boing");
+	}
+
+	free(boing);
+}
+
+void EMSCRIPTEN_KEEPALIVE script_run(boing_t *boing, char *script)
+{
+	boing_value_t *ret = NULL;
+
+
+	if(!(ret = boing_eval(boing, script, NULL, "script")))
+	{
+		boing_error(boing, 0, "eval error");
+	}
+
+	if(boing_value_reference_dec(boing, ret))
+	{
+		boing_error(boing, 0, "could not refdec return value");
+	}
+}
+#endif
 
 /* argument functions */
 
