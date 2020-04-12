@@ -37,8 +37,13 @@ For more information, please refer to <http://unlicense.org/>
 #include "../../boing.h"
 #endif
 
+#ifdef __EMSCRIPTEN__
+#include <SDL.h>
+#include <SDL_ttf.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#endif
 
 
 typedef struct
