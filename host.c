@@ -753,7 +753,6 @@ int main(int argc, char **argv)
 
 /* emscripten controls */
 #ifdef __EMSCRIPTEN__
-extern "C" {
 boing_t *EMSCRIPTEN_KEEPALIVE init_host()
 {
 	boing_t *boing = NULL;
@@ -810,8 +809,6 @@ void EMSCRIPTEN_KEEPALIVE script_run(boing_t *boing, char *script)
 		boing_error(boing, 0, "could not refdec return value");
 	}
 }
-
-} /* extern c */
 #endif
 
 /* argument functions */
