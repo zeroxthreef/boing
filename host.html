@@ -66,7 +66,7 @@
 	p"hello world" nI
 }</textarea>
 			<br>
-			<button onclick="script_run(boing, 'p(55 79 1)')">run</button>
+			<button id="run_button"">run</button>
 			<br><br>
 			<b>console:</b>
 			<textarea id="console_output"></textarea>
@@ -123,8 +123,17 @@
 			document.body.appendChild(script);
 
 			var boing = Module.ccall("init_host", "number", null);
+			console.log("boing return value: " + boing);
 
-			var script_run = Module.cwrap("script_run", null, ["number", "string"])
+			var script_run = Module.cwrap("script_run", null, ["number", "string"]);
+			console.log("script_run: " + script_run);
+
+
+			document.getElementById("run_button").onclick = function(){
+					var script_text = document.getElementById("script").value;
+
+					script_run(boing, script_text);
+				};
 		</script>
 	</body>
 </html>
