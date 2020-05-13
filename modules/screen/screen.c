@@ -37,13 +37,8 @@ For more information, please refer to <http://unlicense.org/>
 #include "../../boing.h"
 #endif
 
-#ifdef __EMSCRIPTEN__
-#include <SDL.h>
-#include <SDL_ttf.h>
-#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#endif
 
 
 typedef struct
@@ -1419,9 +1414,13 @@ int module_stack_add(boing_t *boing, boing_value_t *stack, boing_module_t *modul
 
 int module_screen_init(boing_t *boing, boing_module_t *module)
 {
-	if(SDL_Init(SDL_INIT_EVERYTHING))
+	#ifdef __EMSCRIPTEN__
+		if(SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER))
+	#else
+		if(SDL_Init(SDL_INIT_EVERYTHING))
+	#endif
 	{
-		boing_error(boing, 0, "could not initialize SDL2");
+		boing_error(boing, 0, "could not initialize SDL2: %s", SDL_GetError());
 		return 1;
 	}
 

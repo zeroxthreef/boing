@@ -66,6 +66,9 @@ For more information, please refer to <http://unlicense.org/>
 #ifdef MODULE_OS_ADDED
 	#include "modules/os/os.h"
 #endif
+#ifdef MODULE_SCREEN_ADDED
+	#include "modules/screen/screen.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -328,8 +331,11 @@ int host_root_stack_init(boing_t *boing, boing_value_t *stack)
 	#ifdef MODULE_OS_ADDED
 		/* add os module */
 		ADD_STACK_MODULE(os);
+	#endif
 
-
+	#ifdef MODULE_SCREEN_ADDED
+		/* add screen module */
+		ADD_STACK_MODULE(screen);
 	#endif
 
 	return 0;
@@ -344,6 +350,15 @@ int host_init_modules(boing_t *boing)
 		if(boing_module_add(boing, "os", &module_os_init, &module_os_destroy, &module_os_stack_add, NULL))
 		{
 			boing_error(boing, 0, "could not initialize os module");
+			return 1;
+		}
+	#endif
+
+	#ifdef MODULE_SCREEN_ADDED
+		/* add screen module */
+		if(boing_module_add(boing, "screen", &module_screen_init, &module_screen_destroy, &module_screen_stack_add, NULL))
+		{
+			boing_error(boing, 0, "could not initialize screen module");
 			return 1;
 		}
 	#endif

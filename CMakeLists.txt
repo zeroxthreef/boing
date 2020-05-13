@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(boing)
 
 option(LINK_MODULE_OS "link the os module with the interpreter binary" ON)
+option(LINK_MODULE_SCREEN "link the screen module with the interpreter binary" OFF)
 
 set(SOURCES ${SOURCES} host.c)
 set(LIBRARIES m dl) # the base interpreter needs libm at least
@@ -11,8 +12,18 @@ if(WIN32)
 	set(LIBRARIES ${LIBRARIES} ws2_32 shlwapi)
 endif()
 
+
 if(LINK_MODULE_OS)
 	add_definitions(-DMODULE_OS_ADDED)
+endif()
+if(LINK_MODULE_SCREEN)
+	add_definitions(-DMODULE_SCREEN_ADDED)
+endif()
+if(LINK_MODULE_FFI)
+	add_definitions(-DMODULE_FFI_ADDED)
+endif()
+if(LINK_MODULE_EXAMPLE)
+	add_definitions(-DMODULE_EXAMPLE_ADDED)
 endif()
 
 

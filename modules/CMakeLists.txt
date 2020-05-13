@@ -9,18 +9,11 @@ option(BUILD_FFI "build the ffi module" ON)
 option(BUILD_SCREEN "build the screen module" ON)
 option(BUILD_EXAMPLE "build the example module" ON)
 
-if(BUILD_OS)
-	add_subdirectory(os)
-endif()
-if(BUILD_FFI)
-	add_subdirectory(ffi)
-endif()
-if(BUILD_SCREEN)
-	add_subdirectory(screen)
-endif()
-if(BUILD_EXAMPLE)
-	add_subdirectory(example)
-endif()
+
+add_subdirectory(os)
+add_subdirectory(ffi)
+add_subdirectory(screen)
+add_subdirectory(example)
 # add more here
 # =====================
 
