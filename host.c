@@ -821,6 +821,8 @@ EMSCRIPTEN_KEEPALIVE void script_run(boing_t *boing, char *script)
 {
 	boing_value_t *ret = NULL;
 
+	emscripten_cancel_main_loop();
+
 	if(!(ret = boing_eval(boing, script, NULL, "script")))
 	{
 		boing_error(boing, 0, "eval error");

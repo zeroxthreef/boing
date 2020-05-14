@@ -54,6 +54,10 @@ For more information, please refer to <http://unlicense.org/>
 	#include <dirent.h>
 #endif
 
+#ifdef __EMSCRIPTEN__
+	#include <emscripten.h>
+#endif
+
 
 
 /* simple str as buffer container cleanup */
@@ -1114,6 +1118,84 @@ static boing_value_t *module_os_function_list_dir(boing_t *boing, boing_value_t 
 	return ret;
 }
 
+#ifdef __EMSCRIPTEN__
+/* unable to get around having to create a global for this.
+Could maybe get around it if cleaning up the module didnt
+require this */
+typedef struct
+{
+	boing_t *boing;
+	boing_value_t *callback, *program, *stack;
+} emscripten_container_t;
+
+emscripten_container_t container;
+
+
+static void module_os_emscripten_callback_router(void *arg)
+{
+	emscripten_container_t *internal_container = (emscripten_container_t *)arg;
+	boing_value_t *previous = NULL, *eval_ret = NULL;
+
+	if(!(previous = boing_value_from_double(internal_container->boing, 0.0)))
+	{
+		boing_error(internal_container->boing, 0, "could not create temporary previous value for callback router");
+		return;
+	}
+
+	if(!(eval_ret = boing_eval_value(internal_container->boing, internal_container->boing->program, internal_container->callback, internal_container->stack, previous)))
+	{
+		boing_error(internal_container->boing, 0, "error in callback eval");
+	}
+
+	/* cleanup */
+	boing_value_reference_dec(internal_container->boing, previous);
+}
+
+static boing_value_t *module_os_function_emscripten_set_loop(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args)
+{
+	boing_value_t *ret = NULL;
+
+
+	if(args->length != 1)
+	{
+		boing_error(boing, 0, "OS_EMSCRIPTEN_SET_LOOP expects a single argument");
+		/* TODO throw error */
+		return NULL;
+	}
+
+	if(container.boing) /* already initialized. need to cancel the current loop in case */
+	{
+		emscripten_cancel_main_loop();
+
+		/* clean up the old references */
+		boing_value_reference_dec(boing, container.callback);
+		boing_value_reference_dec(boing, container.stack);
+		boing_value_reference_dec(boing, container.program);
+	}
+	
+	container.boing = boing;
+	container.program = program;
+	container.callback = args->array[0];
+	container.stack = boing_value_stack_get_root(boing, stack);
+
+	boing_value_reference_inc(boing, container.callback);
+	boing_value_reference_inc(boing, container.program);
+	boing_value_reference_inc(boing, container.stack);
+
+	emscripten_set_main_loop_arg(&module_os_emscripten_callback_router, &container, 0, 1);
+
+	if(!(ret = boing_value_from_double(boing, 0.0)))
+	{
+		boing_error(boing, 0, "could not create numeric return");
+		/* TODO throw error */
+		return NULL;
+	}
+
+	return ret;
+}
+
+#endif
+
 /* public functions */
 
 
@@ -1137,11 +1219,24 @@ int module_stack_add(boing_t *boing, boing_value_t *stack, boing_module_t *modul
 
 int module_os_init(boing_t *boing, boing_module_t *module)
 {
+	#ifdef __EMSCRIPTEN__
+	memset(&container, 0, sizeof(emscripten_container_t));
+	#endif
 	return 0;
 }
 
 int module_os_destroy(boing_t *boing, boing_module_t *module)
 {
+	#ifdef __EMSCRIPTEN__
+	emscripten_cancel_main_loop();
+
+	/* clean up the old references */
+	boing_value_reference_dec(boing, container.callback);
+	boing_value_reference_dec(boing, container.stack);
+	boing_value_reference_dec(boing, container.program);
+	#endif
+
+
 	return 0;
 }
 
@@ -1172,6 +1267,9 @@ int module_os_stack_add(boing_t *boing, boing_value_t *stack, boing_module_t *mo
 	BOING_ADD_GLOBAL("OS_IS_DIR", boing_value_from_ptr(boing, &module_os_function_is_dir, BOING_EXTERNAL_FUNCTION, NULL));
 	BOING_ADD_GLOBAL("OS_LIST_DIR", boing_value_from_ptr(boing, &module_os_function_list_dir, BOING_EXTERNAL_FUNCTION, NULL));
 	
+	#ifdef __EMSCRIPTEN__
+	BOING_ADD_GLOBAL("OS_EMSCRIPTEN_SET_LOOP", boing_value_from_ptr(boing, &module_os_function_emscripten_set_loop, BOING_EXTERNAL_FUNCTION, NULL));
+	#endif
 
 	/* non-functions */
 
@@ -1206,7 +1304,7 @@ int module_os_stack_add(boing_t *boing, boing_value_t *stack, boing_module_t *mo
 		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "linux"));
 	#elif unix
 		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "unix"));
-	#elif #ifdef __EMSCRIPTEN__
+	#elif __EMSCRIPTEN__
 		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "emscripten"));
 	#else
 		BOING_ADD_GLOBAL("OS_NAME", boing_value_from_str(boing, "unknown"));

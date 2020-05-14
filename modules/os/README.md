@@ -61,6 +61,7 @@ In most cases, a numeric 0 means success.
 | `OS_IS_FILE` | external value (C function pointer) | returns a number (1 for the path is a file, 0 for not exists/not a file), format: (array(string) file_path) |
 | `OS_IS_DIR` | external value (C function pointer) | returns a number (1 for the path is a directory, 0 for not exists/not a directory), format: (array(string) file_path) |
 | `OS_LIST_DIR` | external value (C function pointer) | returns an array of array(string)s or a number (0) if not a directory or failure, format: (void) |
+| `OS_EMSCRIPTEN_SET_LOOP` | external value (C function pointer) | returns a number (0) and is useful for doing loops that don't freeze the browser. Can only have one of these at a time. Format: (void) |
 
 ## TODO
 * finish adding more numeric identifiers for socket options and various other socket controls
