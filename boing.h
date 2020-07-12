@@ -1314,7 +1314,7 @@ boing_value_t *boing_operation_multiply(boing_t *boing, boing_value_t *program, 
 			}
 		}
 	}
-	else if(args->length > 1 && args->array[0]->type == BOING_TYPE_VALUE_ARRAY) /* remove return an array of split array connected by token */
+	else if(args->length > 1 && args->array[0]->type == BOING_TYPE_VALUE_ARRAY) /* return an array of split array connected by token */
 	{
 		#define CONCAT_ITEM(arr, val)	\
 		do	\
@@ -1355,17 +1355,18 @@ boing_value_t *boing_operation_multiply(boing_t *boing, boing_value_t *program, 
 		}
 
 		/* loop through array and concat everything with the token(s) provided */
-		for(i = 0; i < args->array[0]->length - 1; ++i)
-		{
-			/* add the beginning */
-			CONCAT_ITEM(ret, args->array[0]->array[i]);
-
-			/* concat with arg1+ */
-			for(j = 1; j < args->length; ++j)
+		if(args->array[0]->length) /* make sure the array size is greater than 1 */
+			for(i = 0; i < args->array[0]->length - 1; ++i)
 			{
-				CONCAT_ITEM(ret, args->array[j]);
+				/* add the beginning */
+				CONCAT_ITEM(ret, args->array[0]->array[i]);
+
+				/* concat with arg1+ */
+				for(j = 1; j < args->length; ++j)
+				{
+					CONCAT_ITEM(ret, args->array[j]);
+				}
 			}
-		}
 
 		/* add the end OR, in case the previous didnt run, add it back */
 		if(args->array[0]->length > 1)
@@ -2173,6 +2174,13 @@ boing_value_t *boing_operation_external(boing_t *boing, boing_value_t *program, 
 	boing_value_t *ret = NULL, *new_args = NULL;
 
 
+	if(!args->length)
+	{
+		boing_error(boing, 0, "too few arguments provided to 'x' external operation");
+		/* TODO throw error */
+		return NULL;
+	}
+
 	if(args->length >= 1 && args->array[0]->type != BOING_TYPE_VALUE_EXTERNAL)
 	{
 		boing_error(boing, 0, "incorrect argument supplied to arg0 in 'x' external operation");
@@ -2310,7 +2318,7 @@ boing_value_t *boing_operation_index(boing_t *boing, boing_value_t *program, boi
 			return NULL;
 		}
 
-		if(args->array[1]->number > args->array[0]->length)
+		if(args->array[1]->number >= args->array[0]->length)
 		{
 			boing_error(boing, 0, "arg1 is above arg0 array bounds index operation");
 			/* TODO throw error */
@@ -2356,7 +2364,7 @@ boing_value_t *boing_operation_index(boing_t *boing, boing_value_t *program, boi
 		if(args->array[2]->number != -1.0 && args->array[2]->number >= 0.0)
 		{
 			/* check if its out of bounds */
-			if((end = args->array[2]->number) > args->array[0]->length)
+			if((end = args->array[2]->number) >= args->array[0]->length)
 			{
 				boing_error(boing, 0, "could not index range arg2 because arg1 was above arg0 bounds");
 				/* TODO throw error */
@@ -3591,7 +3599,13 @@ boing_value_t *boing_operation_sort(boing_t *boing, boing_value_t *program, boin
 
 
 	/* determine whether or not its sorting an array or sorting the arguments */
-	if(args->length == 1)
+	if(args->length == 1 && !args->array[0]->length)
+	{
+		/* empty array means return the same array */
+		ret = args->array[0];
+		boing_value_reference_inc(boing, ret);
+	}
+	else if(args->length == 1)
 	{
 		if(!(ret = boing_sort_array(boing, args->array[0])))
 		{
@@ -3632,8 +3646,14 @@ boing_value_t *boing_operation_array_setup(boing_t *boing, boing_value_t *progra
 		return NULL;
 	}
 
+	if(args->array[0]->number < 0)
+	{
+		boing_error(boing, 0, "the array setup operation 'u' requires that arg0 be a positive number");
+		/* TODO throw error */
+		return NULL;
+	}
 
-	if(!(ret = boing_value_request(boing, BOING_TYPE_VALUE_ARRAY, args->array[0]->number)))
+	if(!(ret = boing_value_request(boing, BOING_TYPE_VALUE_ARRAY, (uint32_t)args->array[0]->number)))
 	{
 		boing_error(boing, 0, "could not request array");
 		/* TODO throw error */
@@ -3963,7 +3983,13 @@ void boing_error_script_print(boing_t *boing, boing_value_t *value)
 		the error, but omit the line text printing */
 		if(found)
 		{
-			boing_consume_whitespace(boing, &start);
+			temp = start;
+
+			boing_consume_whitespace(boing, &temp);
+
+			/* make sure the error print doesnt overflow */
+			if(temp < end)
+				start = temp;
 
 			if(!(temp = boing_str_ndup(boing, start, end - start)))
 			{
@@ -5935,7 +5961,7 @@ int boing_value_reference_dec(boing_t *boing, boing_value_t *value)
 			case BOING_TYPE_VALUE_ARRAY:
 				for(i = 0; i < value->length; ++i)
 				{
-					if(value->array[i]->references == 0 || --value->array[i]->references == 0)
+					if(value->array[i] != value && (value->array[i]->references == 0 || --value->array[i]->references == 0))
 					{
 						if(boing_value_reference_dec(boing, value->array[i]))
 						{
@@ -6165,6 +6191,13 @@ boing_value_t *boing_value_copy(boing_t *boing, boing_value_t *value)
 
 			for(i = 0; i < value->length; ++i)
 			{
+				/* prevent a stack overflow when copying arrays that contain themselves */
+				if(value->array[i] == value)
+				{
+					boing_error(boing, 0, "could not copy array value because it is cyclical");
+					return NULL;
+				}
+
 				if(!(temp = boing_value_copy(boing, value->array[i])))
 				{
 					boing_error(boing, 0, "could not copy array value");
@@ -7273,6 +7306,14 @@ char *boing_str_from_value_readable(boing_t *boing, boing_value_t *value, uint8_
 
 				for(j = 0; j < value->length; ++j)
 				{
+					/* prevent stack overflow when stringifying members */
+					if(value->array[j] == value)
+					{
+						boing_error(boing, 0, "could not turn member of '[' operation arguments into string because it was recursive");
+						boing_str_release(boing, ret);
+						return NULL;
+					}
+
 					if(!(temp = boing_str_from_value_readable(boing, value->array[j], previous_type, style, level + 1)))
 					{
 						boing_error(boing, 0, "could not turn member of '[' operation arguments into string");
@@ -7410,6 +7451,8 @@ int boing_value_compare(boing_t *boing, boing_value_t *lhs, boing_value_t *rhs)
 			/* look inside each value */
 			for(i = 0; i < lhs->length; ++i)
 			{
+				if(lhs == lhs->array[i] || rhs == rhs->array[i]) /* impossible to compare a cyclical value so it will never be equal */
+					return BOING_COMPARISON_NOT_EQUAL;
 				if((cmp = boing_value_compare(boing, lhs->array[i], rhs->array[i])) != BOING_COMPARISON_EQUAL)
 					return cmp;
 			}
@@ -7520,7 +7563,11 @@ size_t boing_value_hash_continue(boing_t *boing, boing_value_t *value, size_t st
 	{
 		case BOING_TYPE_VALUE_ARRAY:
 			for(i = 0; i < value->length; ++i)
-				ret = boing_value_hash_continue(boing, value->array[i], ret);
+			{
+				/* TODO: determine correct fail behavior for cyclical hashes */
+				if(value != value->array[i])
+					ret = boing_value_hash_continue(boing, value->array[i], ret);
+			}
 		break;
 		case BOING_TYPE_VALUE_OPERATION:
 			HASH_LOOP(value->operation.op, sizeof(value->operation.op));
