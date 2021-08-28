@@ -1,0 +1,24 @@
+wINPUTr(0)
+wPROGRAM""
+wMEMORYu30000{c0}
+wPOINTER0
+wTRANSLATE [
+  [">" "nPOINTER"]
+  ["<" "dPOINTER"]
+  ["+" "wiMEMORY POINTER jniMEMORY POINTER 256"]
+  ["-" "wiMEMORY POINTER jdiMEMORY POINTER 256"]
+  ["." "p[iMEMORY POINTER]"]
+  ["," "wiMEMORY POINTER r"]
+  ["[" "l(iMEMORY POINTER){"]
+  ["]" "}"]
+]
+l(< I zINPUT)
+{
+  # this version has the ability to read any input. The other has to be filtered to just the bf chars
+  0f(tTRANSLATE [iINPUT I])
+  {
+    wPROGRAM +(PROGRAM tTRANSLATE [iINPUT I])
+  }
+  nI
+}
+em(PROGRAM "program")
