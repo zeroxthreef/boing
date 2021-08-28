@@ -102,6 +102,8 @@ Modules each have their own documentation readmes.
 			- [Behavior with different parameters](#behavior-with-different-parameters-32)
 		- [array setup](#array-setup)
 			- [Behavior with different parameters](#behavior-with-different-parameters-33)
+		- [numeric wrap](#numeric-wrap)
+			- [Behavior with different parameters](#behavior-with-different-parameters-34)
 	- [Operation Quick Reference](#operation-quick-reference)
 	- [Default Interpreter Identifiers](#default-interpreter-identifiers)
 
@@ -975,6 +977,15 @@ p("value: " i(tTABLE"key"  0))
 | (number) | Returns an array initialized to 0 of arg0 elements |
 | (number, any) | Returns an array initialized to whatever arg1 is evaluated to/returns. Arg1 is evaluated like the eval operation and '_'/'ARGS' are passed containing the current index at position 0 which is given a new stack pushed from the current stack. |
 
+### numeric wrap
+| Character | Explicit Arguments Allowed | Implicit Argument Count |
+| --- | --- | --- |
+| `j` | no (however, ranged wrap is a consideration for the future) | 2 |
+
+#### Behavior with different parameters
+| Arguments | Behavior |
+| --- | --- |
+| (number, number) | Returns a wrapped value around `[0, arg1)` or, if negative `(arg1, 0]` |
 
 ## Operation Quick Reference
 | Character | Explicit Arguments Allowed | Implicit Argument Count | Notes |
@@ -1014,6 +1025,7 @@ p("value: " i(tTABLE"key"  0))
 | `g` | yes | 0 | generate(rand)/random to max/random within range |
 | `q` | yes | 1 | quicksort array/quicksort all arguments |
 | `u` | yes | 2 | array setup X number of elements to 0/array setup to X number of elements to X |
+| `j` | no | 2 | wrap number from `[0 arg1)` or `(arg1 0]` |
 
 
 ## Default Interpreter Identifiers

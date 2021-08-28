@@ -279,6 +279,7 @@ u(2e)- array initialize/setup. if a single argument and a number, the array resi
 	 - wARRAY_VAR u6 {-i_0}
 	 -
 	 - produces [-0 -1 -2 -3 -4 -5]
+j(2i)- wrap number. Wraps any positive or negative number within [0, arg1) or (arg1, 0]
 
 automatic default identifiers
 	ARGS
@@ -523,7 +524,7 @@ struct boing_t
 
 #define BOING_VERSION_MAJOR 0
 #define BOING_VERSION_MINOR 1
-#define BOING_VERSION_REVISION 3
+#define BOING_VERSION_REVISION 4
 #define BOING_VERSION_STRING "Boing v."BOING_TO_STR(BOING_VERSION_MAJOR)"."BOING_TO_STR(BOING_VERSION_MINOR)"."BOING_TO_STR(BOING_VERSION_REVISION)", compiled "__DATE__" "__TIME__
 
 /* function prototypes */
@@ -3808,6 +3809,45 @@ boing_value_t *boing_operation_array_setup(boing_t *boing, boing_value_t *progra
 	if(boing_value_reference_dec(boing, eval))
 	{
 		boing_error(boing, 0, "could not refdec eval in array setup operation 'u'");
+		/* TODO throw error */
+		return NULL;
+	}
+
+	return ret;
+}
+
+boing_value_t *boing_operation_wrap(boing_t *boing, boing_value_t *program, boing_value_t *stack, boing_value_t *previous, boing_value_t *args)
+{
+	boing_value_t *ret = NULL;
+	double input, maximum;
+
+	if(args->length != 2 && args->array[0]->type != BOING_TYPE_VALUE_NUMBER && args->array[1]->type == BOING_TYPE_VALUE_NUMBER)
+	{
+		boing_error(boing, 0, "the wrap operation 'j' requires that both arguments are numeric");
+		/* TODO throw error */
+		return NULL;
+	}
+
+	input = args->array[0]->number;
+	maximum = args->array[1]->number;
+
+	if(maximum > 0.0)
+	{
+		if(input < 0.0)
+			input = maximum - fmod(-input, maximum);
+	}
+	else
+	{
+		maximum = -maximum;
+		if(input < 0.0)
+			input += maximum * (1.0 + floor(-input / maximum));
+
+		input = maximum - fmod(input, maximum);
+	}
+	
+	if(!(ret = boing_value_from_double(boing, args->array[1]->number >= 0.0 ? fmod(input, maximum) : -fmod(input, maximum))))
+	{
+		boing_error(boing, 0, "could not create a number value in the wrap operation 'j'");
 		/* TODO throw error */
 		return NULL;
 	}
@@ -8969,7 +9009,8 @@ int boing_init(boing_t *boing)
 		{'a', 2, BOING_OPERATION_EXPLICIT, BOING_OPERATION_EVAL_ARGS, &boing_operation_search},
 		{'g', 0, BOING_OPERATION_EXPLICIT, BOING_OPERATION_EVAL_ARGS, &boing_operation_random},
 		{'q', 1, BOING_OPERATION_EXPLICIT, BOING_OPERATION_EVAL_ARGS, &boing_operation_sort},
-		{'u', 2, BOING_OPERATION_EXPLICIT, BOING_OPERATION_EVAL_ARGS, &boing_operation_array_setup}
+		{'u', 2, BOING_OPERATION_EXPLICIT, BOING_OPERATION_EVAL_ARGS, &boing_operation_array_setup},
+		{'j', 2, BOING_OPERATION_IMPLICIT, BOING_OPERATION_EVAL_ARGS, &boing_operation_wrap}
 	};
 
 	if(!(boing->operations = malloc(sizeof(defaults))))
